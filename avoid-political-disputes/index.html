@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate" />
+    <title>学术作业免责声明</title>
+    <link rel="icon" href="/favicon.png" type="image/png">
+    <link rel="shortcut icon" href="/favicon.png" type="image/png">
+    <!-- MDUI CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css" onerror="this.onerror=null;this.href='https://cdnjs.cloudflare.com/ajax/libs/mdui/1.0.2/css/mdui.min.css';">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; line-height: 1.6; margin: 0; padding: 0; }
+        
+        .mdui-container { max-width: 900px; padding: 2rem; }
+        .mdui-container-with-appbar { padding-top: 4rem; }
+        pre { background: #f6f8fa; padding: 16px; border-radius: 6px; position: relative; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; transition: all 0.3s; }
+        
+        .mdui-theme-layout-dark pre { background: #1e1e1e; color: #f0f0f0; }
+        
+        code { word-wrap: break-word; }
+        .copy-btn { 
+            position: absolute; 
+            right: 4px; 
+            top: 4px; 
+            padding: 4px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            display: none; 
+            z-index: 100; 
+            transition: all 0.2s ease-in-out; 
+            background-color: rgba(246, 248, 250, 0.7);
+            color: #57606a;
+            min-width: 32px;
+            min-height: 32px;
+            box-shadow: none;
+        }
+        
+        .copy-btn.copy-success {
+            color: #4CAF50 !important;
+        }
+        
+        .mdui-theme-layout-dark .copy-btn { 
+            background-color: rgba(30, 30, 30, 0.7);
+            color: #9e9e9e;
+            border: none;
+        }
+        
+        @media (hover: hover) and (pointer: fine) {
+            pre:hover .copy-btn { 
+                display: block; 
+                animation: fadeIn 0.3s; 
+            }
+        }
+        
+        .touch-device .copy-btn { 
+            display: block; 
+            opacity: 0.9; 
+        }
+        
+        .mdui-table { 
+            width: 100%; 
+            margin: 1em 0; 
+            border-collapse: collapse; 
+            transition: all 0.3s; 
+        }
+        
+        .mdui-table-responsive { 
+            overflow-x: auto; 
+            margin-bottom: 1em; 
+        }
+        
+        img { max-width: 100%; height: auto; transition: all 0.3s; }
+        
+        blockquote { 
+            margin: 1em 0; 
+            padding: 0 1em; 
+            border-left: 0.25em solid; 
+            transition: all 0.3s; 
+        }
+        
+        .mdui-theme-layout-dark blockquote { 
+            color: #9e9e9e; 
+            border-left-color: #555; 
+        }
+        
+        .theme-switch { 
+            position: fixed; 
+            bottom: 20px; 
+            right: 20px; 
+            z-index: 9999; 
+        }
+        
+        * html .copy-btn { 
+            position: static; 
+            margin-top: -30px; 
+            margin-right: 5px; 
+            float: right; 
+        }
+        
+        * html .theme-switch { 
+            position: absolute; 
+            bottom: auto; 
+            top: expression(eval(document.documentElement.scrollTop+document.documentElement.clientHeight-60)); 
+        }
+        
+        .mdui-container { 
+            animation: slideIn 0.5s ease; 
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h1, h2, h3, h4, h5, h6 { 
+            animation: slideInFromLeft 0.5s ease; 
+            transition: all 0.3s; 
+        }
+        
+        @keyframes slideInFromLeft {
+            from { opacity: 0; transform: translateX(-15px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @media (max-width: 320px) {
+            .mdui-container { padding: 0.8rem; }
+            h1, h2 { font-size: 1.2rem; }
+            pre { padding: 8px; font-size: 0.8rem; }
+        }
+        
+        .mdui-drawer .mdui-card {
+            margin: 16px;
+            overflow: hidden; 
+        }
+        
+        .mdui-drawer .mdui-card-primary {
+            padding: 16px;
+        }
+        
+        .mdui-drawer .mdui-card-primary-title {
+            font-size: 20px;
+            line-height: 1.4;
+            word-break: break-word;
+            white-space: normal;
+            overflow-wrap: break-word;
+            max-width: 100%;
+        }
+        
+        .mdui-drawer .mdui-card-primary-subtitle {
+            font-size: 14px;
+            line-height: 1.4;
+            word-break: break-word;
+            white-space: normal;
+            overflow-wrap: break-word;
+            cursor: pointer;
+            max-width: 100%;
+        }
+        
+        .mdui-drawer {
+            background-color: #fff;
+            transition: top 0.3s, height 0.3s;
+        }
+        
+        .mdui-theme-layout-dark .mdui-drawer {
+            background-color: #303030;
+        }
+        
+        @media (min-width: 1024px) {
+            .mdui-drawer-open {
+                padding-top: 12px;
+            }
+            
+            body.has-appbar .mdui-drawer {
+                height: calc(100% - var(--appbar-height, 64px));
+                top: var(--appbar-height, 64px);
+            }
+            
+            body.appbar-hidden .mdui-drawer {
+                height: 100%;
+                top: 0;
+            }
+        }
+        
+        .mdui-drawer .mdui-list-item {
+            min-height: 36px;
+            padding-top: 4px;
+            padding-bottom: 4px;
+        }
+        
+        .mdui-drawer .mdui-list-item-content {
+            line-height: 20px;
+        }
+        
+        .mdui-toolbar .toc-btn {
+            height: 48px;
+            width: 48px;
+        }
+    </style>
+    <!--[if IE]>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/es6-promise/4.2.8/es6-promise.auto.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://gcore.jsdelivr.net/npm/classlist-polyfill@1.2.0/src/index.min.js"></script>
+    <script src="https://gcore.jsdelivr.net/npm/eligrey-classlist-js-polyfill@1.2.20171210/classList.min.js"></script>
+    <![endif]-->
+    <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js" onerror="this.onerror=null;this.src='https://cdnjs.cloudflare.com/ajax/libs/mdui/1.0.2/js/mdui.min.js';"></script>
+    <script>
+    // fxxk ie
+    function isIE() {
+        return window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigator.userAgent.indexOf('Trident/') > -1;
+    }
+    
+    function detectBrowser() {
+        var ua = window.navigator.userAgent;
+        var isIE = ua.indexOf('MSIE ') > -1 || ua.indexOf('Trident/') > -1;
+        var isOldEdge = ua.indexOf('Edge/') > -1;
+        var isChrome = ua.indexOf('Chrome/') > -1 && !isOldEdge;
+        var isFirefox = ua.indexOf('Firefox/') > -1;
+        
+        var isOldBrowser = isIE || (isOldEdge && ua.indexOf('Edge/') > 0 && parseInt(ua.split('Edge/')[1]) < 18);
+        
+        return {
+            isOldBrowser: isOldBrowser,
+            isIE: isIE,
+            browserName: isIE ? 'Internet Explorer' : 
+                       isOldEdge ? 'Microsoft Edge Legacy' :
+                       isChrome ? 'Chrome' : 
+                       isFirefox ? 'Firefox' : 
+                       'Unknown Browser'
+        };
+    }
+    
+    function isTouchDevice() {
+        return ('ontouchstart' in window) || 
+               (navigator.maxTouchPoints > 0) || 
+               (navigator.msMaxTouchPoints > 0);
+    }
+    
+    function showBrowserNotice() {
+        var browserInfo = detectBrowser();
+        if (browserInfo.isOldBrowser) {
+            try {
+                if (typeof mdui !== 'undefined' && mdui.snackbar) {
+                    mdui.snackbar({
+                        message: 'Seems you are using unsupported ' + browserInfo.browserName + ', some features may not work properly.',
+                        buttonText: 'OK',
+                        position: 'bottom',
+                        timeout: 50000,
+                        closeOnOutsideClick: true
+                    });
+                } else {
+                    alert('You are using an unsupported ' + browserInfo.browserName + ', some features may not work properly.');
+                }
+            } catch (e) {
+                console.error('show browser err :', e);
+            }
+        }
+    }
+    
+    function copyText(btn) {
+        var pre = btn.parentNode;
+        var code = pre.querySelector('code');
+        var text = code ? (code.innerText || code.textContent) : '';
+        
+        if (window.clipboardData && window.clipboardData.setData) {
+            window.clipboardData.setData("Text", text);
+            showSnackbar('Copied to clipboard!');
+            showCopySuccess(btn);
+            return;
+        }
+        
+        var textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed"; 
+        textArea.style.opacity = "0";
+        document.body.appendChild(textArea);
+        textArea.select();
+        
+        try {
+            var successful = document.execCommand('copy');
+            if (successful) {
+                showSnackbar('Copied to clipboard!');
+                showCopySuccess(btn);
+            } else {
+                showSnackbar('Failed to copy, please copy manually');
+            }
+        } catch (err) {
+            console.error('Failed copy:', err);
+            showSnackbar('Failed to copy, please copy manually');
+        }
+        
+        document.body.removeChild(textArea);
+    }
+    
+    function showCopySuccess(btn) {
+        var icon = btn.querySelector('i');
+        var oldHtml = icon.innerHTML;
+        icon.innerHTML = '&#xe86c;';
+        btn.classList.add('copy-success');
+        
+        setTimeout(function() {
+            icon.innerHTML = oldHtml;
+            btn.classList.remove('copy-success');
+        }, 2000);
+    }
+    
+    function showSnackbar(message) {
+        if (typeof mdui !== 'undefined' && mdui.snackbar) {
+            mdui.snackbar({
+                message: message,
+                position: 'bottom',
+                timeout: 2000,
+                closeOnOutsideClick: true
+            });
+        } else {
+            alert(message);
+        }
+    }
+    
+    function showTranslateComplete(targetlangttl) {
+        var languageMap = {
+            'chinese_simplified': '<i class="mdui-icon material-icons">&#xe8e2;</i> 已翻译为简体中文',
+            'chinese_traditional': '<i class="mdui-icon material-icons">&#xe8e2;</i> 已翻譯為繁體中文',
+            'english': '<i class="mdui-icon material-icons">&#xe8e2;</i> Translated to English',
+            'spanish': '<i class="mdui-icon material-icons">&#xe8e2;</i> Traducido al español',
+            'french': '<i class="mdui-icon material-icons">&#xe8e2;</i> Traduit en français',
+            'deutsch': '<i class="mdui-icon material-icons">&#xe8e2;</i> Übersetzt auf Deutsch',
+            'italian': '<i class="mdui-icon material-icons">&#xe8e2;</i> Tradotto in italiano',
+            'russian': '<i class="mdui-icon material-icons">&#xe8e2;</i> Переведено на русский язык',
+            'japanese': '<i class="mdui-icon material-icons">&#xe8e2;</i> 日本語に翻訳',
+            'korean': '<i class="mdui-icon material-icons">&#xe8e2;</i> 한국어로 번역됨',
+            'vietnamese': '<i class="mdui-icon material-icons">&#xe8e2;</i> Đã dịch sang tiếng Việt',
+            'arabic': '<i class="mdui-icon material-icons">&#xe8e2;</i> ترجم إلى العربية'
+        };
+        var translatedMessage = languageMap[targetlangttl] || '<i class="mdui-icon material-icons">&#xe8e2;</i> Page translated.';
+                if (targetlangttl === 'arabic') {
+            document.documentElement.setAttribute('dir', 'rtl');
+            document.body.classList.add('mdui-rtl');
+        } else {
+            document.documentElement.setAttribute('dir', 'ltr');
+            document.body.classList.remove('mdui-rtl');
+        }
+        
+        if (typeof showTranslateComplete.lastMessage === 'undefined' || showTranslateComplete.lastMessage !== translatedMessage) {
+            showTranslateComplete.lastMessage = translatedMessage;
+            if (typeof mdui !== 'undefined' && mdui.snackbar) {
+                mdui.snackbar({
+                    message: translatedMessage,
+                    position: 'top',
+                    buttonText: 'OK',
+                    timeout: 5000,
+                    closeOnOutsideClick: true
+                });
+            } else {
+                console.log(translatedMessage);
+            }
+        }
+    }
+    
+    function toggleTheme() {
+        var body = document.body;
+        var hasClass = body.className.indexOf('mdui-theme-layout-dark') > -1;
+        
+        if (hasClass) {
+            body.className = body.className.replace(/mdui-theme-layout-dark/g, '').trim();
+        } else {
+            body.className = body.className + ' mdui-theme-layout-dark';
+        }
+    }
+    
+    function ready(fn) {
+        if (document.readyState !== 'loading') {
+            fn();
+        } else if (document.addEventListener) {
+            document.addEventListener('DOMContentLoaded', fn);
+        } else {
+            document.attachEvent('onreadystatechange', function() {
+                if (document.readyState !== 'loading') fn();
+            });
+        }
+    }
+    
+    function updateAppbarHeight() {
+        var appbar = document.querySelector('.mdui-appbar');
+        if (appbar) {
+            var height = appbar.offsetHeight;
+            document.documentElement.style.setProperty('--appbar-height', height + 'px');
+        }
+    }
+    
+    function setupAppbarObserver() {
+        var appbar = document.querySelector('.mdui-appbar');
+        if (!appbar) return;
+        
+        updateAppbarHeight();
+        
+        if ('IntersectionObserver' in window) {
+            var observer = new IntersectionObserver(function(entries) {
+                if (entries[0].isIntersecting) {
+                    document.body.classList.remove('appbar-hidden');
+                    document.body.classList.add('appbar-visible');
+                } else {
+                    document.body.classList.remove('appbar-visible');
+                    document.body.classList.add('appbar-hidden');
+                }
+            }, { threshold: 0.1 });
+            
+            observer.observe(appbar);
+        }
+        
+        if ('ResizeObserver' in window) {
+            var resizeObserver = new ResizeObserver(function() {
+                updateAppbarHeight();
+            });
+            
+            resizeObserver.observe(appbar);
+        }
+    }
+    
+    ready(function() {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.body.className += ' mdui-theme-layout-dark';
+        }
+        
+        document.body.className += ' has-appbar';
+        
+        if (isTouchDevice()) {
+            document.body.className += ' touch-device';
+        }
+        
+        showBrowserNotice();
+        
+        var tables = document.querySelectorAll('table');
+        for (var i = 0; i < tables.length; i++) {
+            var table = tables[i];
+            if (table.className.indexOf('mdui-table') === -1) {
+                table.className += ' mdui-table';
+                var wrapper = document.createElement('div');
+                wrapper.className = 'mdui-table-responsive';
+                if (table.parentNode) {
+                    table.parentNode.insertBefore(wrapper, table);
+                    wrapper.appendChild(table);
+                }
+            }
+        }
+        
+        var pres = document.querySelectorAll('pre');
+        for (var i = 0; i < pres.length; i++) {
+            var pre = pres[i];
+            if (pre.className.indexOf('mdui-shadow-1') === -1) {
+                pre.className += ' mdui-shadow-1';
+            }
+        }
+        
+        var btn = document.createElement('button');
+        btn.className = 'mdui-fab mdui-color-theme-accent mdui-ripple theme-switch';
+        btn.innerHTML = '<i class="mdui-icon material-icons">&#xe3a9;</i>';
+        btn.onclick = toggleTheme;
+        document.body.appendChild(btn);
+        
+        try {
+            if (typeof mdui !== 'undefined') {
+                mdui.mutation();
+                
+                if (mdui.Appbar) {
+                    new mdui.Appbar('.mdui-appbar');
+                }
+            }
+        } catch(e) {
+            console.error('MDUI init err:', e);
+        }
+
+        if (isIE()) {
+            var copyBtns = document.querySelectorAll('.copy-btn');
+            for (var i = 0; i < copyBtns.length; i++) {
+                copyBtns[i].style.display = 'block';
+            }
+            
+            var appbar = document.querySelector('.mdui-appbar');
+            if (appbar) {
+                appbar.style.position = 'fixed';
+                appbar.style.top = '0';
+                appbar.style.width = '100%';
+                appbar.style.zIndex = '1000';
+            }
+        }
+        
+        setupAppbarObserver();
+        
+        var urlElement = document.getElementById('current-url');
+        if (urlElement) {
+            urlElement.innerText = window.location.href;
+        }
+
+        var titles = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+        var tocList = document.getElementById('toc-list');
+        
+        if (tocList && titles.length > 0) {
+            titles.forEach(function(title) {
+                var level = parseInt(title.tagName.charAt(1));
+                var item = document.createElement('a');
+                item.className = 'mdui-list-item mdui-ripple';
+                item.style.paddingLeft = (level * 16) + 'px';
+                item.innerHTML = '<div class="mdui-list-item-content">' + title.textContent + '</div>';
+                
+                if (!title.id) {
+                    title.id = 'toc-' + title.textContent.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+                }
+                item.href = '#' + title.id;
+                
+                item.onclick = function() {
+                    if (window.innerWidth <= 1024) {
+                        toggleToc();
+                    }
+                };
+                tocList.appendChild(item);
+            });
+        }
+    });
+    
+    window.addEventListener('resize', function() {
+        updateAppbarHeight();
+    });
+    
+    if (window.matchMedia) {
+        try {
+            var darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            var darkModeHandler = function(e) {
+                if (e.matches) {
+                    document.body.className += ' mdui-theme-layout-dark';
+                } else {
+                    document.body.className = document.body.className.replace(/mdui-theme-layout-dark/g, '').trim();
+                }
+            };
+            
+            if (darkModeQuery.addListener) {
+                darkModeQuery.addListener(darkModeHandler);
+            } else if (darkModeQuery.addEventListener) {
+                darkModeQuery.addEventListener('change', darkModeHandler);
+            }
+        } catch(e) {
+            console.error('media query err:', e);
+        }
+    }
+    
+    function copyUrl() {
+        var url = window.location.href;
+        if (window.clipboardData && window.clipboardData.setData) {
+            clipboardData.setData("Text", url);
+            showSnackbar('Copied!');
+            return;
+        }
+        
+        var textArea = document.createElement("textarea");
+        textArea.value = url;
+        textArea.style.position = "fixed";
+        textArea.style.opacity = "0";
+        document.body.appendChild(textArea);
+        textArea.select();
+        
+        try {
+            document.execCommand('copy');
+            showSnackbar('Copied!');
+        } catch (err) {
+            console.error('Copy failed:', err);
+            showSnackbar('Failed to copy, please copy manually.');
+        }
+        
+        document.body.removeChild(textArea);
+    }
+    
+    function toggleToc() {
+        var drawer = new mdui.Drawer('#toc-drawer');
+        drawer.toggle();
+    }
+    </script>
+</head>
+<body class="mdui-theme-primary-indigo mdui-theme-accent-blue">
+    <div class="mdui-appbar mdui-appbar-fixed">
+        <div class="mdui-toolbar mdui-color-theme">
+            <button class="mdui-btn mdui-btn-icon toc-btn" onclick="toggleToc()">
+                <i class="mdui-icon material-icons">&#xe5d2;</i>
+            </button>
+            <a href="javascript:;" class="mdui-typo-headline">学术作业免责声明</a>
+            <div class="mdui-toolbar-spacer"></div>
+            <button class="mdui-btn mdui-btn-icon" mdui-menu="{target: '#langMenu'}">
+                <i class="mdui-icon material-icons">&#xe8e2;</i>
+            </button>
+            <ul class="mdui-menu" id="langMenu">
+                <li class="mdui-menu-item">
+                    <a href="javascript:translate.changeLanguage('chinese_simplified');">🇨🇳 简体中文</a>
+                </li>
+                <li class="mdui-menu-item">
+                    <a href="javascript:translate.changeLanguage('chinese_traditional');">🇨🇳 繁體中文</a>
+                </li>
+                <li class="mdui-menu-item">
+                    <a href="javascript:translate.changeLanguage('english');">🇺🇸 English</a>
+                </li>
+                <li class="mdui-menu-item">
+                    <a href="javascript:translate.changeLanguage('spanish');">🇪🇸 Español</a>
+                </li>
+                <li class="mdui-menu-item">
+                    <a href="javascript:translate.changeLanguage('french');">🇫🇷 Français</a>
+                </li>
+                <li class="mdui-menu-item">
+                    <a href="javascript:translate.changeLanguage('deutsch');">🇩🇪 Deutsch</a>
+                </li>
+                <li class="mdui-menu-item">
+                    <a href="javascript:translate.changeLanguage('italian');">🇮🇹 italiano</a>
+                </li>
+                <li class="mdui-menu-item">
+                    <a href="javascript:translate.changeLanguage('russian');">🇷🇺 Русский язык</a>
+                </li>
+                <li class="mdui-menu-item">
+                    <a href="javascript:translate.changeLanguage('japanese');">🇯🇵 日本語</a>
+                </li>
+                <li class="mdui-menu-item">
+                    <a href="javascript:translate.changeLanguage('korean');">🇰🇷 한국어</a>
+                </li>
+                <li class="mdui-menu-item">
+                    <a href="javascript:translate.changeLanguage('vietnamese');">🇻🇳 Tiếng Việt</a>
+                </li>
+                <li class="mdui-menu-item mdui-rtl mdui-text-right" dir="rtl">
+                    <a href="javascript:translate.changeLanguage('arabic');">🇸🇦 بالعربية</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="mdui-drawer mdui-drawer-close" id="toc-drawer">
+        <div class="mdui-card">
+            <div class="mdui-card-primary">
+                <div class="mdui-card-primary-title">学术作业免责声明</div>
+                <div class="mdui-card-primary-subtitle" onclick="copyUrl()" id="current-url"></div>
+            </div>
+        </div>
+        <div class="mdui-list" id="toc-list">
+        </div>
+    </div>
+    
+    <div class="mdui-container mdui-typo mdui-container-with-appbar">
+        <h1>学术作业免责声明</h1>
+<p>本页面旨在明确界定系列学术作品（包括课程作业、任务规划与理论性文档等）中所涉及的观点、评论及分析的性质，防止其在超出学术探讨范畴之外的引用或误解，由此产生任何法律、社会或政治风险。任何单位或个人均不得将本材料作为事实陈述、法律证据或决策依据。</p>
+<h2>性质声明</h2>
+<p>本页面所述免责条款适用于所有标注“仅为完成课程作业而撰写”的学术文档（下称“作业文档”），此类文档具有以下法定性质：<br/>
+1. <strong>虚拟创作属性</strong><br/>
+   文档内容属教学场景下的<strong>学术创作</strong>，不反映作者真实立场。<br/>
+   本文档所有涉及的国内外政治、社会现象及国际时事等内容均为完成学术任务而构建的理论性材料。所呈现的数据、观点与分析均仅反映学术讨论、学习练习或理论研究的需要，不代表作者的个人真实立场或任何意图。<br/>
+2. <strong>封闭场景限制</strong><br/>
+   仅限课程评估体系内流通，不具备社会公开性。<br/>
+   作品中的所有观点和描述均基于课程任务要求而创作，其内容的(包括但不限于)任何表述、措辞或分析均不应被解读为作者对任何具体个体、组织或现实现象的真实评价或支持。<br/>
+3. <strong>时效限定条款</strong><br/>
+   文档法律效力限于课程存续期间，结课后自动失效。</p>
+<h2>法律约束条款</h2>
+<h3>第一条 禁止性条款</h3>
+<p>任何个人/组织不得：<br/>
+- 将作业内容脱离课程语境使用<br/>
+- 进行政治倾向性解读<br/>
+- 作为证据向司法/行政机关提交<br/>
+- 在学术平台（含预印本库）传播</p>
+<p>除非有明确的书面授权，本材料中的任何内容均不得被复制、改动、转载或用于其他形式的传播，特别是(包括但不限于)用于商业用途、法律诉讼、行政调查或公开讨论，不得用于呈堂证供或充作任何具法律效力的证明材料。</p>
+<h3>第二条 责任豁免范围</h3>
+<p>作者不承担因以下行为引发的责任：<br/>
+- 课程外引用/传播<br/>
+- 政治/社会事件关联解读<br/>
+- 第三方恶意解读<br/>
+- 违反本声明的引用/传播<br/>
+- 学术评审外的任何使用<br/>
+- 技术原因导致的未授权访问</p>
+<p>本作品的创作严格遵循学术道德和研究行为规范，意在展示理论探讨与学术思辨的能力。文中涉及的各类理论数据和观点多为假设性构想，如存在任何参考或借鉴的资料，其出处均已尽可能明确说明。</p>
+<h3>第三条 法律适用依据</h3>
+<ol>
+<li>受《中华人民共和国著作权法》第二十二条保护（教学合理使用）</li>
+<li>符合《中华人民共和国高等教育法》第五十七条学术自由原则</li>
+<li>适用《中华人民共和国民法典》第1024条人格权保护条款</li>
+</ol>
+<hr/>
+<blockquote>
+<p><strong>法律提示</strong><br/>
+根据最高人民法院释〔2018〕9号文件，教学场景下的虚构创作不构成《中华人民共和国治安管理处罚法》第二十五条所规定的责任要件。对声明的解释权归文档作者所有，争议解决管辖地为文档创作地人民法院。<br/>
+本声明仅适用于学术作业及理论性讨论内容，任何超出上述范围的引用或解读均与作者无关，相关使用者须自行承担因误用或曲解而可能引发的法律及其他风险。</p>
+</blockquote>
+<hr/>
+<p><code>版本标识：v1.1 | 生效日期：2025-06-08</code> </p>
+    </div>
+<script src="https://cdn.staticfile.net/translate.js/3.12.0/translate.js" onerror="this.onerror=null;this.src='https://sharepoint.cf.stevezmt.top/js/3rd-party/translate.min.js';"></script>
+<script>
+setTimeout(function() {
+    var isTranslated = 0;
+    if (typeof translate !== 'undefined') {
+        try {
+            translate.language.setLocal('chinese_simplified');
+            translate.selectLanguageTag.show = false;
+            translate.ignore.tag.push('tbody');
+            translate.ignore.tag.push('code');
+            translate.ignore.id.push('langMenu');
+            translate.ignore.id.push('igTrans');
+            translate.ignore.class.push('igTrans');
+            translate.ignore.class.push('code-block');   
+            translate.service.use('client.edge');
+            showTranslateComplete(translate.language.getCurrent());
+            translate.execute();
+        } catch(e) {
+            console.error('Translate err:', e);
+        }
+    }
+}, 500);
+translate.listener.renderTaskFinish = function(task){
+    showTranslateComplete(translate.language.getCurrent());
+}
+</script>
+</html>
