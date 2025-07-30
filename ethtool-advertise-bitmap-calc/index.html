@@ -111,7 +111,13 @@
         renderSelected();
       }
       document.getElementById('rateSearch').value = '';
-      document.getElementById('rateSuggest').style.display = 'none';
+      // 重新渲染建议列表，展示最新的前10个匹配项
+      const input = document.getElementById('rateSearch');
+      const suggest = document.getElementById('rateSuggest');
+      const results = filterRates('');
+      lastResults = results;
+      activeIdx = -1;
+      renderSuggest(results);
     }
 
     function filterRates(keyword) {
