@@ -3,33 +3,41 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ethtool advertise bitmap 计算器</title>
+  <title>EthTool Advertise Bitmap 计算器</title>
   <link rel="stylesheet" href="https://gcore.jsdelivr.net/npm/mdui@1.0.2/dist/css/mdui.min.css">
   <style>
-    body { background: #f5f5f5; }
-    .container { max-width: 600px; margin: 40px auto; padding: 32px; background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+    body {}
+    .container { max-width: 600px; margin: 40px auto; padding: 32px; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
     .result { font-size: 1.2em; margin-top: 24px; }
     .mdui-checkbox { margin: 8px 0; }
   </style>
 </head>
-<body>
+<body class="mdui-theme-primary-indigo mdui-theme-accent-blue mdui-theme-layout-auto">
   <div class="container mdui-typo">
-    <h2>ethtool advertise bitmap 计算器</h2>
+    <p class="mdui-typo-title">EthTool Advertise Bitmap 计算器</p>
+    <p>此工具用于计算以太网速率的广播位图，点击结果以复制到剪贴板。<br>有关于 ethtool 的更多信息，请参考 <a href="https://www.man7.org/linux/man-pages/man8/ethtool.8.html" onclick="window.open(this.href, 'popup', 'width=900,height=600,scrollbars=yes,resizable=yes'); return false;">ethtool 文档</a>。
+    <br>快速工具：<a href="https://www.runoob.com/linux/linux-command-manual.html" onclick="window.open(this.href, 'popup', 'width=900,height=600,scrollbars=yes,resizable=yes'); return false;">Linux 命令手册</a> <a href="https://jsq.luomashu.com/programmer-calculator.html" onclick="window.open(this.href, 'popup', 'width=900,height=600,scrollbars=yes,resizable=yes'); return false;">科学计算器</a> </p>
     <form id="bitmapForm">
       <div class="mdui-textfield mdui-textfield-floating-label" style="position:relative;">
         <label class="mdui-textfield-label">搜索或输入速率关键字</label>
-        <input class="mdui-textfield-input" id="rateSearch" type="text" placeholder="" autocomplete="off" style="position:relative;z-index:11;">
-        <ul class="mdui-list mdui-shadow-1" id="rateSuggest" style="max-height:220px;overflow:auto;position:static;background:#fff;width:100%;margin-top:4px;"></ul>
+        <div class="mdui-textfield-error">查找无结果</div>
+        <input class="mdui-textfield-input" id="rateSearch" type="text" autocomplete="off" style="position:relative;z-index:11;">
+        
+        <ul class="mdui-list mdui-shadow-1" id="rateSuggest" style="max-height:220px;overflow:auto;position:static;width:100%;margin-top:4px;"></ul>
       </div>
       <div id="selectedRates" style="margin:12px 0 16px 0;"></div>
-      <button class="mdui-btn mdui-btn-raised mdui-color-theme" type="button" onclick="calcBitmap()">计算</button>
+      <button class="mdui-btn mdui-btn-raised mdui-color-theme" type="button" onclick="calcBitmap();window.location.hash='result';">计算</button>
     </form>
-    <div class="result mdui-typo">
+    <div class="result mdui-typo" id="result">
       <div>十六进制: <span id="hexResult" class="copyable" title="点击复制">0x00000000</span></div>
       <div>十进制: <span id="decResult" class="copyable" title="点击复制">0</span></div>
       <div>二进制: <span id="binResult" class="copyable" title="点击复制">0b0</span></div>
     </div>
   </div>
+  <footer class="mdui-typo" style="text-align:center;margin-top:48px;color:#888;">
+    <p>© 2025 SteveZMTstudios <br>
+    该页面基于 AI 生成并由人类调试维护，感谢 <a href="https://github.com/cinit" target="_blank">咕咕华</a> 测试以及反馈意见</p>
+  </footer>
   <script src="https://gcore.jsdelivr.net/npm/mdui@1.0.2/dist/js/mdui.min.js"></script>
   <script>
     // 速率列表
@@ -133,11 +141,11 @@
       let activeIdx = -1;
       let lastResults = [];
 
-      function renderSuggest(results) {
+    window.renderSuggest = function renderSuggest(results) {
         let html = '';
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 20; i++) {
           if (results[i]) {
-            html += `<li class="mdui-list-item${activeIdx===i?' mdui-color-grey-200':''}" style="cursor:pointer;" data-idx="${i}">${results[i].n} <span style="color:#888;font-size:0.9em;">${results[i].v}</span></li>`;
+            html += `<li class="mdui-list-item${activeIdx===i?' mdui-color-grey-200':''}" style="cursor:pointer;" data-idx="${i}">${results[i].n}&nbsp;<span style="color:#888;font-size:0.9em;">${results[i].v}</span></li>`;
           } else {
             html += `<li class="mdui-list-item" style="height:32px;opacity:0.3;cursor:default;"></li>`;
           }
@@ -154,6 +162,14 @@
             };
           }
         });
+        // 检查无结果，给父div加类
+        const input = document.getElementById('rateSearch');
+        const parent = input.closest('.mdui-textfield');
+        if (results.length === 0 && input.value.trim() !== '') {
+          parent.classList.add('mdui-textfield-invalid');
+        } else {
+          parent.classList.remove('mdui-textfield-invalid');
+        }
       }
 
       input.addEventListener('input', function() {
