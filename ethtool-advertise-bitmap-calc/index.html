@@ -19,7 +19,7 @@
       <div class="mdui-textfield mdui-textfield-floating-label" style="position:relative;">
         <label class="mdui-textfield-label">搜索或输入速率关键字</label>
         <input class="mdui-textfield-input" id="rateSearch" type="text" placeholder="" autocomplete="off" style="position:relative;z-index:11;">
-        <ul class="mdui-list mdui-shadow-1" id="rateSuggest" style="display:none;max-height:220px;overflow:auto;position:absolute;left:0;top:100%;z-index:12;background:#fff;width:100%;margin-top:-1px;"></ul>
+        <ul class="mdui-list mdui-shadow-1" id="rateSuggest" style="max-height:220px;overflow:auto;position:static;background:#fff;width:100%;margin-top:4px;"></ul>
       </div>
       <div id="selectedRates" style="margin:12px 0 16px 0;"></div>
       <button class="mdui-btn mdui-btn-raised mdui-color-theme" type="button" onclick="calcBitmap()">计算</button>
@@ -128,18 +128,25 @@
       let lastResults = [];
 
       function renderSuggest(results) {
-        suggest.innerHTML = results.map((r, idx) =>
-          `<li class="mdui-list-item${activeIdx===idx?' mdui-color-grey-200':''}" style="cursor:pointer;" data-idx="${idx}">${r.n} <span style="color:#888;font-size:0.9em;">${r.v}</span></li>`
-        ).join('');
-        suggest.style.display = results.length ? 'block' : 'none';
+        let html = '';
+        for (let i = 0; i < 10; i++) {
+          if (results[i]) {
+            html += `<li class="mdui-list-item${activeIdx===i?' mdui-color-grey-200':''}" style="cursor:pointer;" data-idx="${i}">${results[i].n} <span style="color:#888;font-size:0.9em;">${results[i].v}</span></li>`;
+          } else {
+            html += `<li class="mdui-list-item" style="height:32px;opacity:0.3;cursor:default;"></li>`;
+          }
+        }
+        suggest.innerHTML = html;
         // 选项点击
         suggest.querySelectorAll('li').forEach((li, idx) => {
-          li.onmousedown = e => { // 用 mousedown 防止 blur 先触发
-            e.preventDefault();
-            addRate(results[idx]);
-            activeIdx = -1;
-            renderSuggest([]);
-          };
+          if (results[idx]) {
+            li.onmousedown = e => {
+              e.preventDefault();
+              addRate(results[idx]);
+              activeIdx = -1;
+              renderSuggest(results);
+            };
+          }
         });
       }
 
@@ -155,27 +162,26 @@
         if (!lastResults.length) return;
         if (e.key === 'ArrowDown') {
           e.preventDefault();
-          activeIdx = (activeIdx + 1) % lastResults.length;
+          activeIdx = (activeIdx + 1) % Math.min(lastResults.length, 10);
           renderSuggest(lastResults);
         } else if (e.key === 'ArrowUp') {
           e.preventDefault();
-          activeIdx = (activeIdx - 1 + lastResults.length) % lastResults.length;
+          activeIdx = (activeIdx - 1 + Math.min(lastResults.length, 10)) % Math.min(lastResults.length, 10);
           renderSuggest(lastResults);
         } else if (e.key === 'Enter') {
           e.preventDefault();
-          if (activeIdx >= 0 && activeIdx < lastResults.length) {
+          if (activeIdx >= 0 && activeIdx < Math.min(lastResults.length, 10)) {
             addRate(lastResults[activeIdx]);
           } else if (lastResults.length > 0) {
             addRate(lastResults[0]);
           }
           activeIdx = -1;
-          renderSuggest([]);
+          renderSuggest(lastResults);
         }
       });
 
-      input.addEventListener('blur', function() {
-        setTimeout(()=>{suggest.style.display='none';}, 200);
-      });
+      // 失焦不隐藏
+      input.addEventListener('blur', function(){});
       renderSelected();
     });
 
