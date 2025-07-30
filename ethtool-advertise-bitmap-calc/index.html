@@ -95,7 +95,7 @@
     function renderSelected() {
       const box = document.getElementById('selectedRates');
       box.innerHTML = selected.map(item =>
-        `<span class="mdui-chip mdui-m-r-1 mdui-m-b-1" style="display:inline-flex;align-items:center;">${item.n} <span style="font-size:0.9em;color:#888;margin-left:4px;">${item.v}</span> <i class="mdui-icon material-icons" style="cursor:pointer;margin-left:4px;" onclick="removeRate('${item.v}')">close</i></span>`
+        `<span class="mdui-chip mdui-chip-title mdui-m-r-1 mdui-m-b-1" style="display:inline-flex;align-items:center;">${item.n} <span style="font-size:0.9em;color:#888;margin-left:4px;">${item.v}</span> <i class="mdui-icon material-icons" style="cursor:pointer;margin-left:4px;" onclick="removeRate('${item.v}')">cancel</i></span>`
       ).join('');
       calcBitmap();
     }
@@ -224,6 +224,7 @@
       if (!old) el.setAttribute('data-old-title', el.title);
       el.title = '已复制!';
       el.classList.add('mdui-text-color-green');
+      mdui.snackbar({ message: '已复制到剪贴板', position: 'bottom', timeout: 900 });
       setTimeout(() => {
         el.title = el.getAttribute('data-old-title') || '点击复制';
         el.classList.remove('mdui-text-color-green');
