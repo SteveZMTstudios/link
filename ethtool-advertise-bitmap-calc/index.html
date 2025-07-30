@@ -16,72 +16,216 @@
   <div class="container mdui-typo">
     <h2>ethtool advertise bitmap 计算器</h2>
     <form id="bitmapForm">
-      <div class="mdui-row-xs-12">
-        <label class="mdui-checkbox">
-          <input type="checkbox" class="mdui-checkbox-input" name="bit" value="0x00000001">
-          <i class="mdui-checkbox-icon"></i> 10baseT/Half (bit 0)
-        </label><br>
-        <label class="mdui-checkbox">
-          <input type="checkbox" class="mdui-checkbox-input" name="bit" value="0x00000002">
-          <i class="mdui-checkbox-icon"></i> 10baseT/Full (bit 1)
-        </label><br>
-        <label class="mdui-checkbox">
-          <input type="checkbox" class="mdui-checkbox-input" name="bit" value="0x00000004">
-          <i class="mdui-checkbox-icon"></i> 100baseT/Half (bit 2)
-        </label><br>
-        <label class="mdui-checkbox">
-          <input type="checkbox" class="mdui-checkbox-input" name="bit" value="0x00000008">
-          <i class="mdui-checkbox-icon"></i> 100baseT/Full (bit 3)
-        </label><br>
-        <label class="mdui-checkbox">
-          <input type="checkbox" class="mdui-checkbox-input" name="bit" value="0x00000010">
-          <i class="mdui-checkbox-icon"></i> 1000baseT/Half (bit 4)
-        </label><br>
-        <label class="mdui-checkbox">
-          <input type="checkbox" class="mdui-checkbox-input" name="bit" value="0x00000020">
-          <i class="mdui-checkbox-icon"></i> 1000baseT/Full (bit 5)
-        </label><br>
-        <label class="mdui-checkbox">
-          <input type="checkbox" class="mdui-checkbox-input" name="bit" value="0x00000040">
-          <i class="mdui-checkbox-icon"></i> Autoneg (bit 6)
-        </label><br>
-        <label class="mdui-checkbox">
-          <input type="checkbox" class="mdui-checkbox-input" name="bit" value="0x00000080">
-          <i class="mdui-checkbox-icon"></i> Pause (bit 7)
-        </label><br>
-        <label class="mdui-checkbox">
-          <input type="checkbox" class="mdui-checkbox-input" name="bit" value="0x00000100">
-          <i class="mdui-checkbox-icon"></i> Asym Pause (bit 8)
-        </label><br>
-        <label class="mdui-checkbox">
-          <input type="checkbox" class="mdui-checkbox-input" name="bit" value="0x00000200">
-          <i class="mdui-checkbox-icon"></i> 2500baseT/Full (bit 9)
-        </label><br>
-        <label class="mdui-checkbox">
-          <input type="checkbox" class="mdui-checkbox-input" name="bit" value="0x00000400">
-          <i class="mdui-checkbox-icon"></i> 10000baseT/Full (bit 10)
-        </label><br>
+      <div class="mdui-textfield mdui-textfield-floating-label" style="position:relative;">
+        <label class="mdui-textfield-label">搜索或输入速率关键字</label>
+        <input class="mdui-textfield-input" id="rateSearch" type="text" placeholder="" autocomplete="off" style="position:relative;z-index:11;">
+        <ul class="mdui-list mdui-shadow-1" id="rateSuggest" style="display:none;max-height:220px;overflow:auto;position:absolute;left:0;top:100%;z-index:12;background:#fff;width:100%;margin-top:-1px;"></ul>
       </div>
+      <div id="selectedRates" style="margin:12px 0 16px 0;"></div>
       <button class="mdui-btn mdui-btn-raised mdui-color-theme" type="button" onclick="calcBitmap()">计算</button>
     </form>
     <div class="result mdui-typo">
-      <div>十六进制: <span id="hexResult">0x00000000</span></div>
-      <div>十进制: <span id="decResult">0</span></div>
-      <div>二进制: <span id="binResult">0b0</span></div>
+      <div>十六进制: <span id="hexResult" class="copyable" title="点击复制">0x00000000</span></div>
+      <div>十进制: <span id="decResult" class="copyable" title="点击复制">0</span></div>
+      <div>二进制: <span id="binResult" class="copyable" title="点击复制">0b0</span></div>
     </div>
   </div>
   <script src="https://gcore.jsdelivr.net/npm/mdui@1.0.2/dist/js/mdui.min.js"></script>
   <script>
-    function calcBitmap() {
-      const checkboxes = document.querySelectorAll('input[name="bit"]:checked');
-      let bitmap = 0;
-      checkboxes.forEach(cb => {
-        bitmap |= parseInt(cb.value);
+    // 速率列表
+    const rateList = [
+      {v:'0x00000001', n:'10baseT/Half'},
+      {v:'0x00000002', n:'10baseT/Full'},
+      {v:'0x00000004', n:'100baseT/Half'},
+      {v:'0x00000008', n:'100baseT/Full'},
+      {v:'0x00000010', n:'1000baseT/Half'},
+      {v:'0x00000020', n:'1000baseT/Full'},
+      {v:'0x00000040', n:'Autoneg'},
+      {v:'0x00000080', n:'Pause'},
+      {v:'0x00000100', n:'Asym Pause'},
+      {v:'0x00000200', n:'2500baseT/Full'},
+      {v:'0x00000400', n:'10000baseT/Full'},
+      {v:'0x00008000', n:'2500Base-X/Full'},
+      {v:'0x20000000', n:'56000baseSR4 Full'},
+      {v:'0x40000000', n:'56000baseLR4 Full'},
+      {v:'0x1000000000', n:'100000baseKR4 Full'},
+      {v:'0x2000000000', n:'100000baseSR4 Full'},
+      {v:'0x4000000000', n:'100000baseCR4 Full'},
+      {v:'0x8000000000', n:'100000baseLR4_ER4 Full'},
+      {v:'0x200000000000000', n:'100000baseKR2 Full'},
+      {v:'0x400000000000000', n:'100000baseSR2 Full'},
+      {v:'0x800000000000000', n:'100000baseCR2 Full'},
+      {v:'0x1000000000000000', n:'100000baseLR2_ER2_FR2 Full'},
+      {v:'0x2000000000000000', n:'100000baseDR2 Full'},
+      {v:'0x8000000000000000000', n:'100000baseKR Full'},
+      {v:'0x10000000000000000000', n:'100000baseSR Full'},
+      {v:'0x20000000000000000000', n:'100000baseLR_ER_FR Full'},
+      {v:'0x40000000000000000000', n:'100000baseCR Full'},
+      {v:'0x80000000000000000000', n:'100000baseDR Full'},
+      {v:'0x4000000000000000', n:'200000baseKR4 Full'},
+      {v:'0x8000000000000000', n:'200000baseSR4 Full'},
+      {v:'0x10000000000000000', n:'200000baseLR4_ER4_FR4 Full'},
+      {v:'0x20000000000000000', n:'200000baseDR4 Full'},
+      {v:'0x40000000000000000', n:'200000baseCR4 Full'},
+      {v:'0x100000000000000000000', n:'200000baseKR2 Full'},
+      {v:'0x200000000000000000000', n:'200000baseSR2 Full'},
+      {v:'0x400000000000000000000', n:'200000baseLR2_ER2_FR2 Full'},
+      {v:'0x800000000000000000000', n:'200000baseDR2 Full'},
+      {v:'0x1000000000000000000000', n:'200000baseCR2 Full'},
+      {v:'0x200000000000000000', n:'400000baseKR8 Full'},
+      {v:'0x400000000000000000', n:'400000baseSR8 Full'},
+      {v:'0x800000000000000000', n:'400000baseLR8_ER8_FR8 Full'},
+      {v:'0x1000000000000000000', n:'400000baseDR8 Full'},
+      {v:'0x2000000000000000000', n:'400000baseCR8 Full'},
+      {v:'0x2000000000000000000000', n:'400000baseKR4 Full'},
+      {v:'0x4000000000000000000000', n:'400000baseSR4 Full'},
+      {v:'0x8000000000000000000000', n:'400000baseLR4_ER4_FR4 Full'},
+      {v:'0x10000000000000000000000', n:'400000baseDR4 Full'},
+      {v:'0x20000000000000000000000', n:'400000baseCR4 Full'},
+      {v:'0x200000000000000000000000', n:'800000baseCR8 Full'},
+      {v:'0x400000000000000000000000', n:'800000baseKR8 Full'},
+      {v:'0x800000000000000000000000', n:'800000baseDR8 Full'},
+      {v:'0x1000000000000000000000000', n:'800000baseDR8_2 Full'},
+      {v:'0x2000000000000000000000000', n:'800000baseSR8 Full'},
+      {v:'0x4000000000000000000000000', n:'800000baseVR8 Full'}
+    ];
+
+    let selected = [];
+
+    function renderSelected() {
+      const box = document.getElementById('selectedRates');
+      box.innerHTML = selected.map(item =>
+        `<span class="mdui-chip mdui-m-r-1 mdui-m-b-1" style="display:inline-flex;align-items:center;">${item.n} <span style="font-size:0.9em;color:#888;margin-left:4px;">${item.v}</span> <i class="mdui-icon material-icons" style="cursor:pointer;margin-left:4px;" onclick="removeRate('${item.v}')">close</i></span>`
+      ).join('');
+      calcBitmap();
+    }
+
+    function removeRate(val) {
+      selected = selected.filter(i => i.v !== val);
+      renderSelected();
+    }
+
+    function addRate(item) {
+      if (!selected.find(i => i.v === item.v)) {
+        selected.push(item);
+        renderSelected();
+      }
+      document.getElementById('rateSearch').value = '';
+      document.getElementById('rateSuggest').style.display = 'none';
+    }
+
+    function filterRates(keyword) {
+      keyword = keyword.trim().toLowerCase();
+      if (!keyword) return [];
+      return rateList.filter(r => r.n.toLowerCase().includes(keyword) || r.v.toLowerCase().includes(keyword));
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const input = document.getElementById('rateSearch');
+      const suggest = document.getElementById('rateSuggest');
+
+      let activeIdx = -1;
+      let lastResults = [];
+
+      function renderSuggest(results) {
+        suggest.innerHTML = results.map((r, idx) =>
+          `<li class="mdui-list-item${activeIdx===idx?' mdui-color-grey-200':''}" style="cursor:pointer;" data-idx="${idx}">${r.n} <span style="color:#888;font-size:0.9em;">${r.v}</span></li>`
+        ).join('');
+        suggest.style.display = results.length ? 'block' : 'none';
+        // 选项点击
+        suggest.querySelectorAll('li').forEach((li, idx) => {
+          li.onmousedown = e => { // 用 mousedown 防止 blur 先触发
+            e.preventDefault();
+            addRate(results[idx]);
+            activeIdx = -1;
+            renderSuggest([]);
+          };
+        });
+      }
+
+      input.addEventListener('input', function() {
+        const val = input.value;
+        const results = filterRates(val);
+        lastResults = results;
+        activeIdx = -1;
+        renderSuggest(results);
       });
-      document.getElementById('hexResult').textContent = '0x' + bitmap.toString(16).padStart(8, '0');
+
+      input.addEventListener('keydown', function(e) {
+        if (!lastResults.length) return;
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          activeIdx = (activeIdx + 1) % lastResults.length;
+          renderSuggest(lastResults);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          activeIdx = (activeIdx - 1 + lastResults.length) % lastResults.length;
+          renderSuggest(lastResults);
+        } else if (e.key === 'Enter') {
+          e.preventDefault();
+          if (activeIdx >= 0 && activeIdx < lastResults.length) {
+            addRate(lastResults[activeIdx]);
+          } else if (lastResults.length > 0) {
+            addRate(lastResults[0]);
+          }
+          activeIdx = -1;
+          renderSuggest([]);
+        }
+      });
+
+      input.addEventListener('blur', function() {
+        setTimeout(()=>{suggest.style.display='none';}, 200);
+      });
+      renderSelected();
+    });
+
+    function calcBitmap() {
+      let bitmap = BigInt(0);
+      selected.forEach(item => {
+        bitmap |= BigInt(item.v);
+      });
+      document.getElementById('hexResult').textContent = '0x' + bitmap.toString(16).toUpperCase();
       document.getElementById('decResult').textContent = bitmap.toString(10);
       document.getElementById('binResult').textContent = '0b' + bitmap.toString(2);
     }
+
+    // 复制到剪贴板并提示
+    function copyText(text, el) {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => {
+          showCopyTip(el);
+        });
+      } else {
+        // 兼容性处理
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        showCopyTip(el);
+      }
+    }
+
+    function showCopyTip(el) {
+      const old = el.getAttribute('data-old-title');
+      if (!old) el.setAttribute('data-old-title', el.title);
+      el.title = '已复制!';
+      el.classList.add('mdui-text-color-green');
+      setTimeout(() => {
+        el.title = el.getAttribute('data-old-title') || '点击复制';
+        el.classList.remove('mdui-text-color-green');
+      }, 900);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.copyable').forEach(function(el) {
+        el.style.cursor = 'pointer';
+        el.addEventListener('click', function() {
+          copyText(el.textContent, el);
+        });
+      });
+    });
   </script>
 </body>
 </html>
