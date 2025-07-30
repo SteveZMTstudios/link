@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ethtool advertise bitmap 计算器</title>
+  <link rel="stylesheet" href="https://gcore.jsdelivr.net/npm/mdui@2.0.3/mdui.min.css">
+  <style>
+    body { background: #f5f5f5; }
+    .container { max-width: 600px; margin: 40px auto; padding: 32px; background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+    .result { font-size: 1.2em; margin-top: 24px; }
+    .mdui-checkbox { margin: 8px 0; }
+  </style>
+</head>
+<body>
+  <div class="container mdui-prose">
+    <h2>ethtool advertise bitmap 计算器</h2>
+    <form id="bitmapForm">
+      <div class="mdui-row">
+        <label class="mdui-checkbox">
+          <input type="checkbox" name="bit" value="0x00000001"> 10baseT/Half (bit 0)
+        </label><br>
+        <label class="mdui-checkbox">
+          <input type="checkbox" name="bit" value="0x00000002"> 10baseT/Full (bit 1)
+        </label><br>
+        <label class="mdui-checkbox">
+          <input type="checkbox" name="bit" value="0x00000004"> 100baseT/Half (bit 2)
+        </label><br>
+        <label class="mdui-checkbox">
+          <input type="checkbox" name="bit" value="0x00000008"> 100baseT/Full (bit 3)
+        </label><br>
+        <label class="mdui-checkbox">
+          <input type="checkbox" name="bit" value="0x00000010"> 1000baseT/Half (bit 4)
+        </label><br>
+        <label class="mdui-checkbox">
+          <input type="checkbox" name="bit" value="0x00000020"> 1000baseT/Full (bit 5)
+        </label><br>
+        <label class="mdui-checkbox">
+          <input type="checkbox" name="bit" value="0x00000040"> Autoneg (bit 6)
+        </label><br>
+        <label class="mdui-checkbox">
+          <input type="checkbox" name="bit" value="0x00000080"> Pause (bit 7)
+        </label><br>
+        <label class="mdui-checkbox">
+          <input type="checkbox" name="bit" value="0x00000100"> Asym Pause (bit 8)
+        </label><br>
+        <label class="mdui-checkbox">
+          <input type="checkbox" name="bit" value="0x00000200"> 2500baseT/Full (bit 9)
+        </label><br>
+        <label class="mdui-checkbox">
+          <input type="checkbox" name="bit" value="0x00000400"> 10000baseT/Full (bit 10)
+        </label><br>
+      </div>
+      <button class="mdui-btn mdui-btn-raised mdui-color-theme" type="button" onclick="calcBitmap()">计算</button>
+    </form>
+    <div class="result mdui-typo">
+      <div>十六进制: <span id="hexResult">0x00000000</span></div>
+      <div>十进制: <span id="decResult">0</span></div>
+      <div>二进制: <span id="binResult">0b0</span></div>
+    </div>
+  </div>
+  <script src="https://gcore.jsdelivr.net/npm/mdui@2.0.3/mdui.min.js"></script>
+  <script>
+    function calcBitmap() {
+      const checkboxes = document.querySelectorAll('input[name="bit"]:checked');
+      let bitmap = 0;
+      checkboxes.forEach(cb => {
+        bitmap |= parseInt(cb.value);
+      });
+      document.getElementById('hexResult').textContent = '0x' + bitmap.toString(16).padStart(8, '0');
+      document.getElementById('decResult').textContent = bitmap.toString(10);
+      document.getElementById('binResult').textContent = '0b' + bitmap.toString(2);
+    }
+  </script>
+</body>
+</html>
