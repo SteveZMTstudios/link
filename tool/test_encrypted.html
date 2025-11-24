@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate" />
+    <title>Markdown 示例用例</title>
+    <link rel="icon" href="/favicon.png" type="image/png">
+    <link rel="shortcut icon" href="/favicon.png" type="image/png">
+    <!-- MDUI CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css" onerror="this.onerror=null;this.href='https://cdnjs.cloudflare.com/ajax/libs/mdui/1.0.2/css/mdui.min.css';">
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; 
+            line-height: 1.6; 
+            margin: 0; 
+            padding: 0; 
+        }
+        
+        .mdui-container { 
+            max-width: 900px; 
+            padding: 2rem; 
+        }
+        
+        .mdui-container-with-appbar { 
+            padding-top: 4rem; 
+        }
+        
+        pre { 
+            background: #f6f8fa; 
+            padding: 16px; 
+            border-radius: 6px; 
+            position: relative; 
+            overflow-x: auto; 
+            white-space: pre-wrap; 
+            word-wrap: break-word; 
+            transition: all 0.3s; 
+        }
+        
+        .mdui-theme-layout-dark pre { 
+            background: #1e1e1e; 
+            color: #f0f0f0; 
+        }
+        
+        code { 
+            word-wrap: break-word; 
+        }
+        
+        .copy-btn { 
+            position: absolute; 
+            right: 4px; 
+            top: 4px; 
+            padding: 4px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            display: none; 
+            z-index: 100; 
+            transition: all 0.2s ease-in-out; 
+            background-color: rgba(246, 248, 250, 0.7);
+            color: #57606a;
+            min-width: 32px;
+            min-height: 32px;
+            box-shadow: none;
+        }
+        
+        .copy-btn.copy-success {
+            color: #4CAF50 !important;
+        }
+        
+        .mdui-theme-layout-dark .copy-btn { 
+            background-color: rgba(30, 30, 30, 0.7);
+            color: #9e9e9e;
+            border: none;
+        }
+        
+        @media (hover: hover) and (pointer: fine) {
+            pre:hover .copy-btn { 
+                display: block; 
+                animation: fadeIn 0.3s; 
+            }
+        }
+        
+        .touch-device .copy-btn { 
+            display: block; 
+            opacity: 0.9; 
+        }
+        
+        .mdui-table { 
+            width: 100%; 
+            margin: 1em 0; 
+            border-collapse: collapse; 
+            transition: all 0.3s; 
+        }
+        
+        .mdui-table-responsive { 
+            overflow-x: auto; 
+            margin-bottom: 1em; 
+        }
+        
+        img { 
+            max-width: 100%; 
+            height: auto; 
+            transition: all 0.3s; 
+        }
+        
+        blockquote { 
+            margin: 1em 0; 
+            padding: 0 1em; 
+            border-left: 0.25em solid; 
+            transition: all 0.3s; 
+        }
+        
+        .mdui-theme-layout-dark blockquote { 
+            color: #9e9e9e; 
+            border-left-color: #555; 
+        }
+        
+        .theme-switch { 
+            position: fixed; 
+            bottom: 20px; 
+            right: 20px; 
+            z-index: 9999; 
+        }
+        
+        .mdui-container { 
+            animation: slideIn 0.5s ease; 
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h1, h2, h3, h4, h5, h6 { 
+            animation: slideInFromLeft 0.5s ease; 
+            transition: all 0.3s; 
+        }
+        
+        @keyframes slideInFromLeft {
+            from { opacity: 0; transform: translateX(-15px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @media (max-width: 320px) {
+            .mdui-container { padding: 0.8rem; }
+            h1, h2 { font-size: 1.2rem; }
+            pre { padding: 8px; font-size: 0.8rem; }
+        }
+        
+        .mdui-drawer .mdui-card {
+            margin: 16px;
+            overflow: hidden; 
+        }
+        
+        .mdui-drawer .mdui-card-primary {
+            padding: 16px;
+        }
+        
+        .mdui-drawer .mdui-card-primary-title {
+            font-size: 20px;
+            line-height: 1.4;
+            word-break: break-word;
+            white-space: normal;
+            overflow-wrap: break-word;
+            max-width: 100%;
+        }
+        
+        .mdui-drawer .mdui-card-primary-subtitle {
+            font-size: 14px;
+            line-height: 1.4;
+            word-break: break-word;
+            white-space: normal;
+            overflow-wrap: break-word;
+            cursor: pointer;
+            max-width: 100%;
+        }
+        
+        .mdui-drawer {
+            background-color: #fff;
+            transition: top 0.3s, height 0.3s;
+        }
+        
+        .mdui-theme-layout-dark .mdui-drawer {
+            background-color: #303030;
+        }
+        
+        @media (min-width: 1024px) {
+            .mdui-drawer-open {
+                padding-top: 12px;
+            }
+            
+            body.has-appbar .mdui-drawer {
+                height: calc(100% - var(--appbar-height, 64px));
+                top: var(--appbar-height, 64px);
+            }
+            
+            body.appbar-hidden .mdui-drawer {
+                height: 100%;
+                top: 0;
+            }
+        }
+        
+        .mdui-drawer .mdui-list-item {
+            min-height: 36px;
+            padding-top: 4px;
+            padding-bottom: 4px;
+        }
+        
+        .mdui-drawer .mdui-list-item-content {
+            line-height: 20px;
+        }
+        
+        .mdui-toolbar .toc-btn {
+            height: 48px;
+            width: 48px;
+        }
+        
+        #encrypted-content {
+            display: none;
+        }
+    </style>
+    <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js" onerror="this.onerror=null;this.src='https://cdnjs.cloudflare.com/ajax/libs/mdui/1.0.2/js/mdui.min.js';"></script>
+</head>
+<body class="mdui-theme-primary-indigo mdui-theme-accent-blue">
+    <div class="mdui-dialog" id="password-dialog">
+        <div class="mdui-dialog-title">访问受限</div>
+        <div class="mdui-dialog-content">
+            <p>请输入密码以查看内容</p>
+            <div class="mdui-textfield mdui-textfield-floating-label">
+                <i class="mdui-icon material-icons">lock</i>
+                <label class="mdui-textfield-label">密码</label>
+                <input class="mdui-textfield-input" type="password" id="password-input" autocomplete="off"/>
+                <div class="mdui-textfield-error"></div>
+            </div>
+        </div>
+        <div class="mdui-dialog-actions">
+            <button class="mdui-btn mdui-ripple" onclick="decryptContent()"><i class="mdui-icon material-icons mdui-icon-right">lock_open</i> 解锁</button>
+        </div>
+    </div>
+
+    <div id="encrypted-content">
+        <div class="mdui-appbar mdui-appbar-fixed">
+            <div class="mdui-toolbar mdui-color-theme">
+                <button class="mdui-btn mdui-btn-icon toc-btn" mdui-drawer="{target: '#toc-drawer'}">
+                    <i class="mdui-icon material-icons">&#xe5d2;</i>
+                </button>
+                <a href="javascript:;" class="mdui-typo-headline">Markdown 示例用例</a>
+                <div class="mdui-toolbar-spacer"></div>
+                <button class="mdui-btn mdui-btn-icon" mdui-menu="{target: '#langMenu'}">
+                    <i class="mdui-icon material-icons">&#xe8e2;</i>
+                </button>
+                <ul class="mdui-menu" id="langMenu">
+                    <li class="mdui-menu-item">
+                        <a href="javascript:translate.changeLanguage('chinese_simplified');">🇨🇳 简体中文</a>
+                    </li>
+                    <li class="mdui-menu-item">
+                        <a href="javascript:translate.changeLanguage('chinese_traditional');">🇨🇳 繁體中文</a>
+                    </li>
+                    <li class="mdui-menu-item">
+                        <a href="javascript:translate.changeLanguage('english');">🇺🇸 English</a>
+                    </li>
+                    <li class="mdui-menu-item">
+                        <a href="javascript:translate.changeLanguage('spanish');">🇪🇸 Español</a>
+                    </li>
+                    <li class="mdui-menu-item">
+                        <a href="javascript:translate.changeLanguage('french');">🇫🇷 Français</a>
+                    </li>
+                    <li class="mdui-menu-item">
+                        <a href="javascript:translate.changeLanguage('deutsch');">🇩🇪 Deutsch</a>
+                    </li>
+                    <li class="mdui-menu-item">
+                        <a href="javascript:translate.changeLanguage('italian');">🇮🇹 italiano</a>
+                    </li>
+                    <li class="mdui-menu-item">
+                        <a href="javascript:translate.changeLanguage('russian');">🇷🇺 Русский язык</a>
+                    </li>
+                    <li class="mdui-menu-item">
+                        <a href="javascript:translate.changeLanguage('japanese');">🇯🇵 日本語</a>
+                    </li>
+                    <li class="mdui-menu-item">
+                        <a href="javascript:translate.changeLanguage('korean');">🇰🇷 한국어</a>
+                    </li>
+                    <li class="mdui-menu-item">
+                        <a href="javascript:translate.changeLanguage('vietnamese');">🇻🇳 Tiếng Việt</a>
+                    </li>
+                    <li class="mdui-menu-item mdui-rtl mdui-text-right" dir="rtl">
+                        <a href="javascript:translate.changeLanguage('arabic');">🇸🇦 بالعربية</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="mdui-drawer mdui-drawer-close" id="toc-drawer">
+            <div class="mdui-card">
+                <div class="mdui-card-primary">
+                    <div class="mdui-card-primary-title">Markdown 示例用例</div>
+                    <div class="mdui-card-primary-subtitle" onclick="copyUrl()" id="current-url"></div>
+                </div>
+            </div>
+            <div class="mdui-list" id="toc-list">
+            </div>
+        </div>
+        
+        <div class="mdui-container mdui-typo mdui-container-with-appbar" id="main-content">
+        </div>
+    </div>
+
+    <script>
+    var ENCRYPTED_DATA = { "ciphertext": "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", "iv": "rgLzIa3siQaSIXR2" };
+    var SALT = "hmjQ4R334RpS2M0/TOMlqMprVtP1QMWnNnwV+R8hfZY=";
+    var passwordDialog = null;
+    
+    function base64ToArrayBuffer(base64) {
+        var binaryString = atob(base64);
+        var bytes = new Uint8Array(binaryString.length);
+        for (var i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+        }
+        return bytes.buffer;
+    }
+    
+    function arrayBufferToBase64(buffer) {
+        var binary = '';
+        var bytes = new Uint8Array(buffer);
+        for (var i = 0; i < bytes.byteLength; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return btoa(binary);
+    }
+    
+    async function deriveKey(password, salt) {
+        var enc = new TextEncoder();
+        var keyMaterial = await crypto.subtle.importKey(
+            'raw',
+            enc.encode(password),
+            'PBKDF2',
+            false,
+            ['deriveBits', 'deriveKey']
+        );
+        
+        return crypto.subtle.deriveKey(
+            {
+                name: 'PBKDF2',
+                salt: salt,
+                iterations: 100000,
+                hash: 'SHA-256'
+            },
+            keyMaterial,
+            { name: 'AES-GCM', length: 256 },
+            false,
+            ['decrypt']
+        );
+    }
+    
+    async function decryptContent() {
+        var passwordInput = document.getElementById('password-input');
+        var password = passwordInput.value;
+        var textfield = passwordInput.parentElement;
+        var errorDiv = textfield.querySelector('.mdui-textfield-error');
+        
+        if (!password) {
+            textfield.classList.add('mdui-textfield-invalid');
+            errorDiv.textContent = '请输入密码';
+            return;
+        }
+        
+        try {
+            var saltBytes = base64ToArrayBuffer(SALT);
+            var key = await deriveKey(password, saltBytes);
+            
+            var encryptedBytes = base64ToArrayBuffer(ENCRYPTED_DATA.ciphertext);
+            var iv = base64ToArrayBuffer(ENCRYPTED_DATA.iv);
+            
+            var decryptedBytes = await crypto.subtle.decrypt(
+                {
+                    name: 'AES-GCM',
+                    iv: iv
+                },
+                key,
+                encryptedBytes
+            );
+            
+            var decryptedText = new TextDecoder().decode(decryptedBytes);
+            
+            if (passwordDialog) {
+                passwordDialog.close();
+            }
+            document.getElementById('encrypted-content').style.display = 'block';
+            document.getElementById('main-content').innerHTML = decryptedText;
+            
+            initializePage();
+            
+        } catch (e) {
+            console.error('解密失败:', e);
+            textfield.classList.add('mdui-textfield-invalid');
+            errorDiv.textContent = '密码错误，请重试';
+            passwordInput.value = '';
+            passwordInput.focus();
+        }
+    }
+    
+    document.getElementById('password-input').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            decryptContent();
+        }
+    });
+    
+    document.getElementById('password-input').addEventListener('input', function(e) {
+        var textfield = e.target.parentElement;
+        var errorDiv = textfield.querySelector('.mdui-textfield-error');
+        textfield.classList.remove('mdui-textfield-invalid');
+        errorDiv.textContent = '';
+    });
+    
+    function isTouchDevice() {
+        return ('ontouchstart' in window) || 
+               (navigator.maxTouchPoints > 0) || 
+               (navigator.msMaxTouchPoints > 0);
+    }
+    
+    function copyText(btn) {
+        var pre = btn.parentNode;
+        var code = pre.querySelector('code');
+        var text = code ? (code.innerText || code.textContent) : '';
+        
+        var textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed"; 
+        textArea.style.opacity = "0";
+        document.body.appendChild(textArea);
+        textArea.select();
+        
+        try {
+            var successful = document.execCommand('copy');
+            if (successful) {
+                showSnackbar('已复制到剪贴板！');
+                showCopySuccess(btn);
+            } else {
+                showSnackbar('复制失败，请手动复制');
+            }
+        } catch (err) {
+            console.error('复制失败:', err);
+            showSnackbar('复制失败，请手动复制');
+        }
+        
+        document.body.removeChild(textArea);
+    }
+    
+    function showCopySuccess(btn) {
+        var icon = btn.querySelector('i');
+        var oldHtml = icon.innerHTML;
+        icon.innerHTML = '&#xe86c;';
+        btn.classList.add('copy-success');
+        
+        setTimeout(function() {
+            icon.innerHTML = oldHtml;
+            btn.classList.remove('copy-success');
+        }, 2000);
+    }
+    
+    function showSnackbar(message) {
+        if (typeof mdui !== 'undefined' && mdui.snackbar) {
+            mdui.snackbar({
+                message: message,
+                position: 'bottom',
+                timeout: 2000,
+                closeOnOutsideClick: true
+            });
+        }
+    }
+    
+    function showTranslateComplete(targetlangttl) {
+        var languageMap = {
+            'chinese_simplified': '<i class="mdui-icon material-icons">&#xe8e2;</i> 已翻译为简体中文',
+            'chinese_traditional': '<i class="mdui-icon material-icons">&#xe8e2;</i> 已翻譯為繁體中文',
+            'english': '<i class="mdui-icon material-icons">&#xe8e2;</i> Translated to English',
+            'spanish': '<i class="mdui-icon material-icons">&#xe8e2;</i> Traducido al español',
+            'french': '<i class="mdui-icon material-icons">&#xe8e2;</i> Traduit en français',
+            'deutsch': '<i class="mdui-icon material-icons">&#xe8e2;</i> Übersetzt auf Deutsch',
+            'italian': '<i class="mdui-icon material-icons">&#xe8e2;</i> Tradotto in italiano',
+            'russian': '<i class="mdui-icon material-icons">&#xe8e2;</i> Переведено на русский язык',
+            'japanese': '<i class="mdui-icon material-icons">&#xe8e2;</i> 日本語に翻訳',
+            'korean': '<i class="mdui-icon material-icons">&#xe8e2;</i> 한국어로 번역됨',
+            'vietnamese': '<i class="mdui-icon material-icons">&#xe8e2;</i> Đã dịch sang tiếng Việt',
+            'arabic': '<i class="mdui-icon material-icons">&#xe8e2;</i> ترجم إلى العربية'
+        };
+        var translatedMessage = languageMap[targetlangttl] || '<i class="mdui-icon material-icons">&#xe8e2;</i> Page translated.';
+        
+        if (targetlangttl === 'arabic') {
+            document.documentElement.setAttribute('dir', 'rtl');
+            document.body.classList.add('mdui-rtl');
+        } else {
+            document.documentElement.setAttribute('dir', 'ltr');
+            document.body.classList.remove('mdui-rtl');
+        }
+        
+        if (typeof showTranslateComplete.lastMessage === 'undefined' || showTranslateComplete.lastMessage !== translatedMessage) {
+            showTranslateComplete.lastMessage = translatedMessage;
+            showSnackbar(translatedMessage);
+        }
+    }
+    
+    function toggleTheme() {
+        var body = document.body;
+        var hasClass = body.className.indexOf('mdui-theme-layout-dark') > -1;
+        
+        if (hasClass) {
+            body.className = body.className.replace(/mdui-theme-layout-dark/g, '').trim();
+        } else {
+            body.className = body.className + ' mdui-theme-layout-dark';
+        }
+    }
+    
+    function updateAppbarHeight() {
+        var appbar = document.querySelector('.mdui-appbar');
+        if (appbar) {
+            var height = appbar.offsetHeight;
+            document.documentElement.style.setProperty('--appbar-height', height + 'px');
+        }
+    }
+    
+    function setupAppbarObserver() {
+        var appbar = document.querySelector('.mdui-appbar');
+        if (!appbar) return;
+        
+        updateAppbarHeight();
+        
+        if ('IntersectionObserver' in window) {
+            var observer = new IntersectionObserver(function(entries) {
+                if (entries[0].isIntersecting) {
+                    document.body.classList.remove('appbar-hidden');
+                    document.body.classList.add('appbar-visible');
+                } else {
+                    document.body.classList.remove('appbar-visible');
+                    document.body.classList.add('appbar-hidden');
+                }
+            }, { threshold: 0.1 });
+            
+            observer.observe(appbar);
+        }
+    }
+    
+    function copyUrl() {
+        var url = window.location.href;
+        
+        var textArea = document.createElement("textarea");
+        textArea.value = url;
+        textArea.style.position = "fixed";
+        textArea.style.opacity = "0";
+        document.body.appendChild(textArea);
+        textArea.select();
+        
+        try {
+            document.execCommand('copy');
+            showSnackbar('已复制！');
+        } catch (err) {
+            console.error('复制失败:', err);
+            showSnackbar('复制失败，请手动复制');
+        }
+        
+        document.body.removeChild(textArea);
+    }
+    
+    function initializePage() {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.body.className += ' mdui-theme-layout-dark';
+        }
+        
+        document.body.className += ' has-appbar';
+        
+        if (isTouchDevice()) {
+            document.body.className += ' touch-device';
+        }
+        
+        var tables = document.querySelectorAll('table');
+        for (var i = 0; i < tables.length; i++) {
+            var table = tables[i];
+            if (table.className.indexOf('mdui-table') === -1) {
+                table.className += ' mdui-table';
+                var wrapper = document.createElement('div');
+                wrapper.className = 'mdui-table-responsive';
+                if (table.parentNode) {
+                    table.parentNode.insertBefore(wrapper, table);
+                    wrapper.appendChild(table);
+                }
+            }
+        }
+        
+        var pres = document.querySelectorAll('pre');
+        for (var i = 0; i < pres.length; i++) {
+            var pre = pres[i];
+            if (pre.className.indexOf('mdui-shadow-1') === -1) {
+                pre.className += ' mdui-shadow-1';
+            }
+            
+            var btn = document.createElement('button');
+            btn.className = 'copy-btn mdui-btn mdui-btn-icon mdui-ripple';
+            btn.onclick = function() { copyText(this); };
+            var icon = document.createElement('i');
+            icon.className = 'mdui-icon material-icons';
+            icon.innerHTML = '&#xe14d;';
+            btn.appendChild(icon);
+            pre.insertBefore(btn, pre.firstChild);
+        }
+        
+        var themeBtn = document.createElement('button');
+        themeBtn.className = 'mdui-fab mdui-color-theme-accent mdui-ripple theme-switch';
+        themeBtn.innerHTML = '<i class="mdui-icon material-icons">&#xe3a9;</i>';
+        themeBtn.onclick = toggleTheme;
+        document.body.appendChild(themeBtn);
+        
+        try {
+            if (typeof mdui !== 'undefined') {
+                mdui.mutation();
+                
+                if (mdui.Appbar) {
+                    new mdui.Appbar('.mdui-appbar');
+                }
+            }
+        } catch(e) {
+            console.error('MDUI 初始化错误:', e);
+        }
+        
+        setupAppbarObserver();
+        
+        var urlElement = document.getElementById('current-url');
+        if (urlElement) {
+            urlElement.innerText = window.location.href;
+        }
+
+        var titles = document.querySelectorAll('#main-content h1, #main-content h2, #main-content h3, #main-content h4, #main-content h5, #main-content h6');
+        var tocList = document.getElementById('toc-list');
+        
+        if (tocList && titles.length > 0) {
+            tocList.innerHTML = '';
+            titles.forEach(function(title) {
+                var level = parseInt(title.tagName.charAt(1));
+                var item = document.createElement('a');
+                item.className = 'mdui-list-item mdui-ripple';
+                item.style.paddingLeft = (level * 16) + 'px';
+                item.innerHTML = '<div class="mdui-list-item-content">' + title.textContent + '</div>';
+                
+                if (!title.id) {
+                    title.id = 'toc-' + title.textContent.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+                }
+                item.href = '#' + title.id;
+                
+                item.onclick = function(e) {
+                    if (window.innerWidth <= 1024) {
+                        e.preventDefault();
+                        var drawer = new mdui.Drawer('#toc-drawer');
+                        drawer.close();
+                        setTimeout(function() {
+                            window.location.hash = title.id;
+                        }, 300);
+                    }
+                };
+                tocList.appendChild(item);
+            });
+        }
+        
+        setTimeout(function() {
+            if (typeof translate !== 'undefined') {
+                try {
+                    translate.language.setLocal('chinese_simplified');
+                    translate.selectLanguageTag.show = false;
+                    translate.ignore.tag.push('tbody');
+                    translate.ignore.tag.push('code');
+                    translate.ignore.id.push('langMenu');
+                    translate.ignore.class.push('code-block');   
+                    translate.service.use('client.edge');
+                    translate.execute();
+                } catch(e) {
+                    console.error('翻译错误:', e);
+                }
+            }
+        }, 500);
+        
+        if (typeof translate !== 'undefined') {
+            translate.listener.renderTaskFinish = function(task){
+                showTranslateComplete(translate.language.getCurrent());
+            }
+        };
+        mdui.mutation();
+    }
+    
+    window.addEventListener('resize', function() {
+        updateAppbarHeight();
+    });
+    
+    window.addEventListener('load', function() {
+        passwordDialog = new mdui.Dialog('#password-dialog', {
+            modal: true,
+            closeOnEsc: false,
+            closeOnCancel: false
+        });
+        passwordDialog.open();
+        
+        setTimeout(function() {
+            document.getElementById('password-input').focus();
+        }, 300);
+    });
+    </script>
+    <script src="https://cdn.staticfile.net/translate.js/3.12.0/translate.js" onerror="this.onerror=null;this.src='https://sharepoint.cf.stevezmt.top/js/3rd-party/translate.min.js';"></script>
+</body>
+</html>

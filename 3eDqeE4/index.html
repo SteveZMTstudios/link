@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate" />
+    <title>快件详细信息</title>
+    <link rel="icon" href="/favicon.png" type="image/png">
+    <link rel="shortcut icon" href="/favicon.png" type="image/png">
+    <!-- MDUI CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css" onerror="this.onerror=null;this.href='https://cdnjs.cloudflare.com/ajax/libs/mdui/1.0.2/css/mdui.min.css';">
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; 
+            line-height: 1.6; 
+            margin: 0; 
+            padding: 0; 
+        }
+        
+        .mdui-container { 
+            max-width: 900px; 
+            padding: 2rem; 
+        }
+        
+        .mdui-container-with-appbar { 
+            padding-top: 4rem; 
+        }
+        
+        pre { 
+            background: #f6f8fa; 
+            padding: 16px; 
+            border-radius: 6px; 
+            position: relative; 
+            overflow-x: auto; 
+            white-space: pre-wrap; 
+            word-wrap: break-word; 
+            transition: all 0.3s; 
+        }
+        
+        .mdui-theme-layout-dark pre { 
+            background: #1e1e1e; 
+            color: #f0f0f0; 
+        }
+        
+        code { 
+            word-wrap: break-word; 
+        }
+        
+        .copy-btn { 
+            position: absolute; 
+            right: 4px; 
+            top: 4px; 
+            padding: 4px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            display: none; 
+            z-index: 100; 
+            transition: all 0.2s ease-in-out; 
+            background-color: rgba(246, 248, 250, 0.7);
+            color: #57606a;
+            min-width: 32px;
+            min-height: 32px;
+            box-shadow: none;
+        }
+        
+        .copy-btn.copy-success {
+            color: #4CAF50 !important;
+        }
+        
+        .mdui-theme-layout-dark .copy-btn { 
+            background-color: rgba(30, 30, 30, 0.7);
+            color: #9e9e9e;
+            border: none;
+        }
+        
+        @media (hover: hover) and (pointer: fine) {
+            pre:hover .copy-btn { 
+                display: block; 
+                animation: fadeIn 0.3s; 
+            }
+        }
+        
+        .touch-device .copy-btn { 
+            display: block; 
+            opacity: 0.9; 
+        }
+        
+        .mdui-table { 
+            width: 100%; 
+            margin: 1em 0; 
+            border-collapse: collapse; 
+            transition: all 0.3s; 
+        }
+        
+        .mdui-table-responsive { 
+            overflow-x: auto; 
+            margin-bottom: 1em; 
+        }
+        
+        img { 
+            max-width: 100%; 
+            height: auto; 
+            transition: all 0.3s; 
+        }
+        
+        blockquote { 
+            margin: 1em 0; 
+            padding: 0 1em; 
+            border-left: 0.25em solid; 
+            transition: all 0.3s; 
+        }
+        
+        .mdui-theme-layout-dark blockquote { 
+            color: #9e9e9e; 
+            border-left-color: #555; 
+        }
+        
+        .theme-switch { 
+            position: fixed; 
+            bottom: 20px; 
+            right: 20px; 
+            z-index: 9999; 
+        }
+        
+        .mdui-container { 
+            animation: slideIn 0.5s ease; 
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h1, h2, h3, h4, h5, h6 { 
+            animation: slideInFromLeft 0.5s ease; 
+            transition: all 0.3s; 
+        }
+        
+        @keyframes slideInFromLeft {
+            from { opacity: 0; transform: translateX(-15px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @media (max-width: 320px) {
+            .mdui-container { padding: 0.8rem; }
+            h1, h2 { font-size: 1.2rem; }
+            pre { padding: 8px; font-size: 0.8rem; }
+        }
+        
+        .mdui-drawer .mdui-card {
+            margin: 16px;
+            overflow: hidden; 
+        }
+        
+        .mdui-drawer .mdui-card-primary {
+            padding: 16px;
+        }
+        
+        .mdui-drawer .mdui-card-primary-title {
+            font-size: 20px;
+            line-height: 1.4;
+            word-break: break-word;
+            white-space: normal;
+            overflow-wrap: break-word;
+            max-width: 100%;
+        }
+        
+        .mdui-drawer .mdui-card-primary-subtitle {
+            font-size: 14px;
+            line-height: 1.4;
+            word-break: break-word;
+            white-space: normal;
+            overflow-wrap: break-word;
+            cursor: pointer;
+            max-width: 100%;
+        }
+        
+        .mdui-drawer {
+            background-color: #fff;
+            transition: top 0.3s, height 0.3s;
+        }
+        
+        .mdui-theme-layout-dark .mdui-drawer {
+            background-color: #303030;
+        }
+        
+        @media (min-width: 1024px) {
+            .mdui-drawer-open {
+                padding-top: 12px;
+            }
+            
+            body.has-appbar .mdui-drawer {
+                height: calc(100% - var(--appbar-height, 64px));
+                top: var(--appbar-height, 64px);
+            }
+            
+            body.appbar-hidden .mdui-drawer {
+                height: 100%;
+                top: 0;
+            }
+        }
+        
+        .mdui-drawer .mdui-list-item {
+            min-height: 36px;
+            padding-top: 4px;
+            padding-bottom: 4px;
+        }
+        
+        .mdui-drawer .mdui-list-item-content {
+            line-height: 20px;
+        }
+        
+        .mdui-toolbar .toc-btn {
+            height: 48px;
+            width: 48px;
+        }
+        
+        #encrypted-content {
+            display: none;
+        }
+    </style>
+    <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js" onerror="this.onerror=null;this.src='https://cdnjs.cloudflare.com/ajax/libs/mdui/1.0.2/js/mdui.min.js';"></script>
+</head>
+<body class="mdui-theme-primary-indigo mdui-theme-accent-blue">
+    <div class="mdui-dialog" id="password-dialog">
+        <div class="mdui-dialog-title">访问受限</div>
+        <div class="mdui-dialog-content">
+            <p>请输入运单号以查看内容</p>
+            <div class="mdui-textfield mdui-textfield-floating-label">
+                <i class="mdui-icon material-icons">lock</i>
+                <label class="mdui-textfield-label">密码</label>
+                <input class="mdui-textfield-input" type="password" id="password-input" autocomplete="off"/>
+                <div class="mdui-textfield-error"></div>
+            </div>
+        </div>
+        <div class="mdui-dialog-actions">
+            <button class="mdui-btn mdui-ripple" onclick="decryptContent()"><i class="mdui-icon material-icons mdui-icon-right">lock_open</i> 解锁</button>
+        </div>
+    </div>
+
+    <div id="encrypted-content">
+        <div class="mdui-appbar mdui-appbar-fixed">
+            <div class="mdui-toolbar mdui-color-theme">
+                <button class="mdui-btn mdui-btn-icon toc-btn" mdui-drawer="{target: '#toc-drawer'}">
+                    <i class="mdui-icon material-icons">&#xe5d2;</i>
+                </button>
+                <a href="javascript:;" class="mdui-typo-headline">快件详细信息</a>
+                <div class="mdui-toolbar-spacer"></div>
+                <button class="mdui-btn mdui-btn-icon" mdui-menu="{target: '#langMenu'}">
+                    <i class="mdui-icon material-icons">&#xe8e2;</i>
+                </button>
+                <ul class="mdui-menu" id="langMenu">
+                    <li class="mdui-menu-item">
+                        <a href="javascript:translate.changeLanguage('chinese_simplified');">🇨🇳 简体中文</a>
+                    </li>
+                    <li class="mdui-menu-item">
+                        <a href="javascript:translate.changeLanguage('chinese_traditional');">🇨🇳 繁體中文</a>
+                    </li>
+                    <li class="mdui-menu-item">
+                        <a href="javascript:translate.changeLanguage('english');">🇺🇸 English</a>
+                    </li>
+                    <li class="mdui-menu-item">
+                        <a href="javascript:translate.changeLanguage('spanish');">🇪🇸 Español</a>
+                    </li>
+                    <li class="mdui-menu-item">
+                        <a href="javascript:translate.changeLanguage('french');">🇫🇷 Français</a>
+                    </li>
+                    <li class="mdui-menu-item">
+                        <a href="javascript:translate.changeLanguage('deutsch');">🇩🇪 Deutsch</a>
+                    </li>
+                    <li class="mdui-menu-item">
+                        <a href="javascript:translate.changeLanguage('italian');">🇮🇹 italiano</a>
+                    </li>
+                    <li class="mdui-menu-item">
+                        <a href="javascript:translate.changeLanguage('russian');">🇷🇺 Русский язык</a>
+                    </li>
+                    <li class="mdui-menu-item">
+                        <a href="javascript:translate.changeLanguage('japanese');">🇯🇵 日本語</a>
+                    </li>
+                    <li class="mdui-menu-item">
+                        <a href="javascript:translate.changeLanguage('korean');">🇰🇷 한국어</a>
+                    </li>
+                    <li class="mdui-menu-item">
+                        <a href="javascript:translate.changeLanguage('vietnamese');">🇻🇳 Tiếng Việt</a>
+                    </li>
+                    <li class="mdui-menu-item mdui-rtl mdui-text-right" dir="rtl">
+                        <a href="javascript:translate.changeLanguage('arabic');">🇸🇦 بالعربية</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="mdui-drawer mdui-drawer-close" id="toc-drawer">
+            <div class="mdui-card">
+                <div class="mdui-card-primary">
+                    <div class="mdui-card-primary-title">快件详细信息</div>
+                    <div class="mdui-card-primary-subtitle" onclick="copyUrl()" id="current-url"></div>
+                </div>
+            </div>
+            <div class="mdui-list" id="toc-list">
+            </div>
+        </div>
+        
+        <div class="mdui-container mdui-typo mdui-container-with-appbar" id="main-content">
+        </div>
+    </div>
+
+    <script>
+    var ENCRYPTED_DATA = { "ciphertext": "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", "iv": "33/Gu/Y4yVTXGJN+" };
+    var SALT = "w39IDFDJSnc/6w2NhXHRn92xLkzRIaYtjvoJBJMKrSs=";
+    var passwordDialog = null;
+    
+    function base64ToArrayBuffer(base64) {
+        var binaryString = atob(base64);
+        var bytes = new Uint8Array(binaryString.length);
+        for (var i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+        }
+        return bytes.buffer;
+    }
+    
+    function arrayBufferToBase64(buffer) {
+        var binary = '';
+        var bytes = new Uint8Array(buffer);
+        for (var i = 0; i < bytes.byteLength; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return btoa(binary);
+    }
+    
+    async function deriveKey(password, salt) {
+        var enc = new TextEncoder();
+        var keyMaterial = await crypto.subtle.importKey(
+            'raw',
+            enc.encode(password),
+            'PBKDF2',
+            false,
+            ['deriveBits', 'deriveKey']
+        );
+        
+        return crypto.subtle.deriveKey(
+            {
+                name: 'PBKDF2',
+                salt: salt,
+                iterations: 100000,
+                hash: 'SHA-256'
+            },
+            keyMaterial,
+            { name: 'AES-GCM', length: 256 },
+            false,
+            ['decrypt']
+        );
+    }
+    
+    async function decryptContent() {
+        var passwordInput = document.getElementById('password-input');
+        var password = passwordInput.value;
+        var textfield = passwordInput.parentElement;
+        var errorDiv = textfield.querySelector('.mdui-textfield-error');
+        
+        if (!password) {
+            textfield.classList.add('mdui-textfield-invalid');
+            errorDiv.textContent = '请输入密码';
+            return;
+        }
+        
+        try {
+            var saltBytes = base64ToArrayBuffer(SALT);
+            var key = await deriveKey(password, saltBytes);
+            
+            var encryptedBytes = base64ToArrayBuffer(ENCRYPTED_DATA.ciphertext);
+            var iv = base64ToArrayBuffer(ENCRYPTED_DATA.iv);
+            
+            var decryptedBytes = await crypto.subtle.decrypt(
+                {
+                    name: 'AES-GCM',
+                    iv: iv
+                },
+                key,
+                encryptedBytes
+            );
+            
+            var decryptedText = new TextDecoder().decode(decryptedBytes);
+            
+            if (passwordDialog) {
+                passwordDialog.close();
+            }
+            document.getElementById('encrypted-content').style.display = 'block';
+            document.getElementById('main-content').innerHTML = decryptedText;
+            
+            initializePage();
+            
+        } catch (e) {
+            console.error('解密失败:', e);
+            textfield.classList.add('mdui-textfield-invalid');
+            errorDiv.textContent = '密码错误，请重试';
+            passwordInput.value = '';
+            passwordInput.focus();
+        }
+    }
+    
+    document.getElementById('password-input').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            decryptContent();
+        }
+    });
+    
+    document.getElementById('password-input').addEventListener('input', function(e) {
+        var textfield = e.target.parentElement;
+        var errorDiv = textfield.querySelector('.mdui-textfield-error');
+        textfield.classList.remove('mdui-textfield-invalid');
+        errorDiv.textContent = '';
+    });
+    
+    function isTouchDevice() {
+        return ('ontouchstart' in window) || 
+               (navigator.maxTouchPoints > 0) || 
+               (navigator.msMaxTouchPoints > 0);
+    }
+    
+    function copyText(btn) {
+        var pre = btn.parentNode;
+        var code = pre.querySelector('code');
+        var text = code ? (code.innerText || code.textContent) : '';
+        
+        var textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed"; 
+        textArea.style.opacity = "0";
+        document.body.appendChild(textArea);
+        textArea.select();
+        
+        try {
+            var successful = document.execCommand('copy');
+            if (successful) {
+                showSnackbar('已复制到剪贴板！');
+                showCopySuccess(btn);
+            } else {
+                showSnackbar('复制失败，请手动复制');
+            }
+        } catch (err) {
+            console.error('复制失败:', err);
+            showSnackbar('复制失败，请手动复制');
+        }
+        
+        document.body.removeChild(textArea);
+    }
+    
+    function showCopySuccess(btn) {
+        var icon = btn.querySelector('i');
+        var oldHtml = icon.innerHTML;
+        icon.innerHTML = '&#xe86c;';
+        btn.classList.add('copy-success');
+        
+        setTimeout(function() {
+            icon.innerHTML = oldHtml;
+            btn.classList.remove('copy-success');
+        }, 2000);
+    }
+    
+    function showSnackbar(message) {
+        if (typeof mdui !== 'undefined' && mdui.snackbar) {
+            mdui.snackbar({
+                message: message,
+                position: 'bottom',
+                timeout: 2000,
+                closeOnOutsideClick: true
+            });
+        }
+    }
+    
+    function showTranslateComplete(targetlangttl) {
+        var languageMap = {
+            'chinese_simplified': '<i class="mdui-icon material-icons">&#xe8e2;</i> 已翻译为简体中文',
+            'chinese_traditional': '<i class="mdui-icon material-icons">&#xe8e2;</i> 已翻譯為繁體中文',
+            'english': '<i class="mdui-icon material-icons">&#xe8e2;</i> Translated to English',
+            'spanish': '<i class="mdui-icon material-icons">&#xe8e2;</i> Traducido al español',
+            'french': '<i class="mdui-icon material-icons">&#xe8e2;</i> Traduit en français',
+            'deutsch': '<i class="mdui-icon material-icons">&#xe8e2;</i> Übersetzt auf Deutsch',
+            'italian': '<i class="mdui-icon material-icons">&#xe8e2;</i> Tradotto in italiano',
+            'russian': '<i class="mdui-icon material-icons">&#xe8e2;</i> Переведено на русский язык',
+            'japanese': '<i class="mdui-icon material-icons">&#xe8e2;</i> 日本語に翻訳',
+            'korean': '<i class="mdui-icon material-icons">&#xe8e2;</i> 한국어로 번역됨',
+            'vietnamese': '<i class="mdui-icon material-icons">&#xe8e2;</i> Đã dịch sang tiếng Việt',
+            'arabic': '<i class="mdui-icon material-icons">&#xe8e2;</i> ترجم إلى العربية'
+        };
+        var translatedMessage = languageMap[targetlangttl] || '<i class="mdui-icon material-icons">&#xe8e2;</i> Page translated.';
+        
+        if (targetlangttl === 'arabic') {
+            document.documentElement.setAttribute('dir', 'rtl');
+            document.body.classList.add('mdui-rtl');
+        } else {
+            document.documentElement.setAttribute('dir', 'ltr');
+            document.body.classList.remove('mdui-rtl');
+        }
+        
+        if (typeof showTranslateComplete.lastMessage === 'undefined' || showTranslateComplete.lastMessage !== translatedMessage) {
+            showTranslateComplete.lastMessage = translatedMessage;
+            showSnackbar(translatedMessage);
+        }
+    }
+    
+    function toggleTheme() {
+        var body = document.body;
+        var hasClass = body.className.indexOf('mdui-theme-layout-dark') > -1;
+        
+        if (hasClass) {
+            body.className = body.className.replace(/mdui-theme-layout-dark/g, '').trim();
+        } else {
+            body.className = body.className + ' mdui-theme-layout-dark';
+        }
+    }
+    
+    function updateAppbarHeight() {
+        var appbar = document.querySelector('.mdui-appbar');
+        if (appbar) {
+            var height = appbar.offsetHeight;
+            document.documentElement.style.setProperty('--appbar-height', height + 'px');
+        }
+    }
+    
+    function setupAppbarObserver() {
+        var appbar = document.querySelector('.mdui-appbar');
+        if (!appbar) return;
+        
+        updateAppbarHeight();
+        
+        if ('IntersectionObserver' in window) {
+            var observer = new IntersectionObserver(function(entries) {
+                if (entries[0].isIntersecting) {
+                    document.body.classList.remove('appbar-hidden');
+                    document.body.classList.add('appbar-visible');
+                } else {
+                    document.body.classList.remove('appbar-visible');
+                    document.body.classList.add('appbar-hidden');
+                }
+            }, { threshold: 0.1 });
+            
+            observer.observe(appbar);
+        }
+    }
+    
+    function copyUrl() {
+        var url = window.location.href;
+        
+        var textArea = document.createElement("textarea");
+        textArea.value = url;
+        textArea.style.position = "fixed";
+        textArea.style.opacity = "0";
+        document.body.appendChild(textArea);
+        textArea.select();
+        
+        try {
+            document.execCommand('copy');
+            showSnackbar('已复制！');
+        } catch (err) {
+            console.error('复制失败:', err);
+            showSnackbar('复制失败，请手动复制');
+        }
+        
+        document.body.removeChild(textArea);
+    }
+    
+    function initializePage() {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.body.className += ' mdui-theme-layout-dark';
+        }
+        
+        document.body.className += ' has-appbar';
+        
+        if (isTouchDevice()) {
+            document.body.className += ' touch-device';
+        }
+        
+        var tables = document.querySelectorAll('table');
+        for (var i = 0; i < tables.length; i++) {
+            var table = tables[i];
+            if (table.className.indexOf('mdui-table') === -1) {
+                table.className += ' mdui-table';
+                var wrapper = document.createElement('div');
+                wrapper.className = 'mdui-table-responsive';
+                if (table.parentNode) {
+                    table.parentNode.insertBefore(wrapper, table);
+                    wrapper.appendChild(table);
+                }
+            }
+        }
+        
+        var pres = document.querySelectorAll('pre');
+        for (var i = 0; i < pres.length; i++) {
+            var pre = pres[i];
+            if (pre.className.indexOf('mdui-shadow-1') === -1) {
+                pre.className += ' mdui-shadow-1';
+            }
+            
+            var btn = document.createElement('button');
+            btn.className = 'copy-btn mdui-btn mdui-btn-icon mdui-ripple';
+            btn.onclick = function() { copyText(this); };
+            var icon = document.createElement('i');
+            icon.className = 'mdui-icon material-icons';
+            icon.innerHTML = '&#xe14d;';
+            btn.appendChild(icon);
+            pre.insertBefore(btn, pre.firstChild);
+        }
+        
+        var themeBtn = document.createElement('button');
+        themeBtn.className = 'mdui-fab mdui-color-theme-accent mdui-ripple theme-switch';
+        themeBtn.innerHTML = '<i class="mdui-icon material-icons">&#xe3a9;</i>';
+        themeBtn.onclick = toggleTheme;
+        document.body.appendChild(themeBtn);
+        
+        try {
+            if (typeof mdui !== 'undefined') {
+                mdui.mutation();
+                
+                if (mdui.Appbar) {
+                    new mdui.Appbar('.mdui-appbar');
+                }
+            }
+        } catch(e) {
+            console.error('MDUI 初始化错误:', e);
+        }
+        
+        setupAppbarObserver();
+        
+        var urlElement = document.getElementById('current-url');
+        if (urlElement) {
+            urlElement.innerText = window.location.href;
+        }
+
+        var titles = document.querySelectorAll('#main-content h1, #main-content h2, #main-content h3, #main-content h4, #main-content h5, #main-content h6');
+        var tocList = document.getElementById('toc-list');
+        
+        if (tocList && titles.length > 0) {
+            tocList.innerHTML = '';
+            titles.forEach(function(title) {
+                var level = parseInt(title.tagName.charAt(1));
+                var item = document.createElement('a');
+                item.className = 'mdui-list-item mdui-ripple';
+                item.style.paddingLeft = (level * 16) + 'px';
+                item.innerHTML = '<div class="mdui-list-item-content">' + title.textContent + '</div>';
+                
+                if (!title.id) {
+                    title.id = 'toc-' + title.textContent.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+                }
+                item.href = '#' + title.id;
+                
+                item.onclick = function(e) {
+                    if (window.innerWidth <= 1024) {
+                        e.preventDefault();
+                        var drawer = new mdui.Drawer('#toc-drawer');
+                        drawer.close();
+                        setTimeout(function() {
+                            window.location.hash = title.id;
+                        }, 300);
+                    }
+                };
+                tocList.appendChild(item);
+            });
+        }
+        
+        setTimeout(function() {
+            if (typeof translate !== 'undefined') {
+                try {
+                    translate.language.setLocal('chinese_simplified');
+                    translate.selectLanguageTag.show = false;
+                    translate.ignore.tag.push('tbody');
+                    translate.ignore.tag.push('code');
+                    translate.ignore.id.push('langMenu');
+                    translate.ignore.class.push('code-block');   
+                    translate.service.use('client.edge');
+                    translate.execute();
+                } catch(e) {
+                    console.error('翻译错误:', e);
+                }
+            }
+        }, 500);
+        
+        if (typeof translate !== 'undefined') {
+            translate.listener.renderTaskFinish = function(task){
+                showTranslateComplete(translate.language.getCurrent());
+            }
+        };
+        mdui.mutation();
+    }
+    
+    window.addEventListener('resize', function() {
+        updateAppbarHeight();
+    });
+    
+    window.addEventListener('load', function() {
+        passwordDialog = new mdui.Dialog('#password-dialog', {
+            modal: true,
+            closeOnEsc: false,
+            closeOnCancel: false
+        });
+        passwordDialog.open();
+        
+        setTimeout(function() {
+            document.getElementById('password-input').focus();
+        }, 300);
+    });
+    </script>
+    <script src="https://cdn.staticfile.net/translate.js/3.12.0/translate.js" onerror="this.onerror=null;this.src='https://sharepoint.cf.stevezmt.top/js/3rd-party/translate.min.js';"></script>
+</body>
+</html>
