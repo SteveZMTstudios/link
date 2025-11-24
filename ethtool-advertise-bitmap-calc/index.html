@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EthTool Advertise Bitmap 计算器</title>
+  <link rel="stylesheet" href="https://gcore.jsdelivr.net/npm/mdui@1.0.2/dist/css/mdui.min.css">
+  <style>
+    body {}
+    .container { max-width: 600px; margin: 40px auto; padding: 32px; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+    .result { font-size: 1.2em; margin-top: 24px; }
+    .mdui-checkbox { margin: 8px 0; }
+  </style>
+</head>
+<body class="mdui-theme-primary-indigo mdui-theme-accent-blue mdui-theme-layout-auto">
+  <div class="container mdui-typo">
+    <p class="mdui-typo-title">EthTool Advertise Bitmap 计算器</p>
+    <p>此工具用于计算以太网速率的广播位图，点击结果以复制到剪贴板。<br>有关于 ethtool 的更多信息，请参考 <a href="https://www.man7.org/linux/man-pages/man8/ethtool.8.html" onclick="window.open(this.href, 'popup', 'width=900,height=600,scrollbars=yes,resizable=yes'); return false;">ethtool 文档</a>。
+    <br>快速工具：<a href="https://www.runoob.com/linux/linux-command-manual.html" onclick="window.open(this.href, 'popup', 'width=900,height=600,scrollbars=yes,resizable=yes'); return false;">Linux 命令手册</a> <a href="https://jsq.luomashu.com/programmer-calculator.html" onclick="window.open(this.href, 'popup', 'width=900,height=600,scrollbars=yes,resizable=yes'); return false;">科学计算器</a> </p>
+    <form id="bitmapForm">
+      <div class="mdui-textfield mdui-textfield-floating-label" style="position:relative;">
+        <label class="mdui-textfield-label">搜索或输入速率关键字</label>
+        <div class="mdui-textfield-error">查找无结果</div>
+        <input class="mdui-textfield-input" id="rateSearch" type="text" autocomplete="off" style="position:relative;z-index:11;">
+        
+        <ul class="mdui-list mdui-shadow-1" id="rateSuggest" style="max-height:220px;overflow:auto;position:static;width:100%;margin-top:4px;"></ul>
+      </div>
+      <div id="selectedRates" style="margin:12px 0 16px 0;"></div>
+      <button class="mdui-btn mdui-btn-raised mdui-color-theme" type="button" onclick="calcBitmap();window.location.hash='result';">计算</button>
+    </form>
+    <div class="result mdui-typo" id="result">
+      <div>十六进制: <span id="hexResult" class="copyable" title="点击复制">0x00000000</span></div>
+      <div>十进制: <span id="decResult" class="copyable" title="点击复制">0</span></div>
+      <div>二进制: <span id="binResult" class="copyable" title="点击复制">0b0</span></div>
+    </div>
+  </div>
+  <footer class="mdui-typo" style="text-align:center;margin-top:48px;color:#888;">
+    <p>© 2025 SteveZMTstudios <br>
+    该页面基于 AI 生成并由人类调试维护，感谢 <a href="https://github.com/cinit" target="_blank">咕咕华</a> 测试以及反馈意见</p>
+  </footer>
+  <script src="https://gcore.jsdelivr.net/npm/mdui@1.0.2/dist/js/mdui.min.js"></script>
+  <script>
+    // 速率列表
+    const rateList = [
+      {v:'0x00000001', n:'10baseT/Half'},
+      {v:'0x00000002', n:'10baseT/Full'},
+      {v:'0x00000004', n:'100baseT/Half'},
+      {v:'0x00000008', n:'100baseT/Full'},
+      {v:'0x00000010', n:'1000baseT/Half'},
+      {v:'0x00000020', n:'1000baseT/Full'},
+      {v:'0x00000040', n:'Autoneg'},
+      {v:'0x00000080', n:'Pause'},
+      {v:'0x00000100', n:'Asym Pause'},
+      {v:'0x00000200', n:'2500baseT/Full'},
+      {v:'0x00000400', n:'10000baseT/Full'},
+      {v:'0x00008000', n:'2500Base-X/Full'},
+      {v:'0x20000000', n:'56000baseSR4 Full'},
+      {v:'0x40000000', n:'56000baseLR4 Full'},
+      {v:'0x1000000000', n:'100000baseKR4 Full'},
+      {v:'0x2000000000', n:'100000baseSR4 Full'},
+      {v:'0x4000000000', n:'100000baseCR4 Full'},
+      {v:'0x8000000000', n:'100000baseLR4_ER4 Full'},
+      {v:'0x200000000000000', n:'100000baseKR2 Full'},
+      {v:'0x400000000000000', n:'100000baseSR2 Full'},
+      {v:'0x800000000000000', n:'100000baseCR2 Full'},
+      {v:'0x1000000000000000', n:'100000baseLR2_ER2_FR2 Full'},
+      {v:'0x2000000000000000', n:'100000baseDR2 Full'},
+      {v:'0x8000000000000000000', n:'100000baseKR Full'},
+      {v:'0x10000000000000000000', n:'100000baseSR Full'},
+      {v:'0x20000000000000000000', n:'100000baseLR_ER_FR Full'},
+      {v:'0x40000000000000000000', n:'100000baseCR Full'},
+      {v:'0x80000000000000000000', n:'100000baseDR Full'},
+      {v:'0x4000000000000000', n:'200000baseKR4 Full'},
+      {v:'0x8000000000000000', n:'200000baseSR4 Full'},
+      {v:'0x10000000000000000', n:'200000baseLR4_ER4_FR4 Full'},
+      {v:'0x20000000000000000', n:'200000baseDR4 Full'},
+      {v:'0x40000000000000000', n:'200000baseCR4 Full'},
+      {v:'0x100000000000000000000', n:'200000baseKR2 Full'},
+      {v:'0x200000000000000000000', n:'200000baseSR2 Full'},
+      {v:'0x400000000000000000000', n:'200000baseLR2_ER2_FR2 Full'},
+      {v:'0x800000000000000000000', n:'200000baseDR2 Full'},
+      {v:'0x1000000000000000000000', n:'200000baseCR2 Full'},
+      {v:'0x200000000000000000', n:'400000baseKR8 Full'},
+      {v:'0x400000000000000000', n:'400000baseSR8 Full'},
+      {v:'0x800000000000000000', n:'400000baseLR8_ER8_FR8 Full'},
+      {v:'0x1000000000000000000', n:'400000baseDR8 Full'},
+      {v:'0x2000000000000000000', n:'400000baseCR8 Full'},
+      {v:'0x2000000000000000000000', n:'400000baseKR4 Full'},
+      {v:'0x4000000000000000000000', n:'400000baseSR4 Full'},
+      {v:'0x8000000000000000000000', n:'400000baseLR4_ER4_FR4 Full'},
+      {v:'0x10000000000000000000000', n:'400000baseDR4 Full'},
+      {v:'0x20000000000000000000000', n:'400000baseCR4 Full'},
+      {v:'0x200000000000000000000000', n:'800000baseCR8 Full'},
+      {v:'0x400000000000000000000000', n:'800000baseKR8 Full'},
+      {v:'0x800000000000000000000000', n:'800000baseDR8 Full'},
+      {v:'0x1000000000000000000000000', n:'800000baseDR8_2 Full'},
+      {v:'0x2000000000000000000000000', n:'800000baseSR8 Full'},
+      {v:'0x4000000000000000000000000', n:'800000baseVR8 Full'}
+    ];
+
+    let selected = [];
+
+    function renderSelected() {
+      const box = document.getElementById('selectedRates');
+      box.innerHTML = selected.map(item =>
+        `<span class="mdui-chip mdui-chip-title mdui-m-r-1 mdui-m-b-1" style="display:inline-flex;align-items:center;">${item.n} <span style="font-size:0.9em;color:#888;margin-left:4px;">${item.v}</span> <i class="mdui-icon material-icons" style="cursor:pointer;margin-left:4px;" onclick="removeRate('${item.v}')">cancel</i></span>`
+      ).join('');
+      calcBitmap();
+    }
+
+    function removeRate(val) {
+      selected = selected.filter(i => i.v !== val);
+      renderSelected();
+    }
+
+    function addRate(item) {
+      if (!selected.find(i => i.v === item.v)) {
+        selected.push(item);
+        renderSelected();
+      }
+      document.getElementById('rateSearch').value = '';
+      // 重新渲染建议列表，展示最新的前10个匹配项
+      const input = document.getElementById('rateSearch');
+      const suggest = document.getElementById('rateSuggest');
+      const results = filterRates('');
+      lastResults = results;
+      activeIdx = -1;
+      renderSuggest(results);
+    }
+
+    function filterRates(keyword) {
+      keyword = keyword.trim().toLowerCase();
+      if (!keyword) return [];
+      return rateList.filter(r => r.n.toLowerCase().includes(keyword) || r.v.toLowerCase().includes(keyword));
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const input = document.getElementById('rateSearch');
+      const suggest = document.getElementById('rateSuggest');
+
+      let activeIdx = -1;
+      let lastResults = [];
+
+    window.renderSuggest = function renderSuggest(results) {
+        let html = '';
+        for (let i = 0; i < 20; i++) {
+          if (results[i]) {
+            html += `<li class="mdui-list-item${activeIdx===i?' mdui-color-grey-200':''}" style="cursor:pointer;" data-idx="${i}">${results[i].n}&nbsp;<span style="color:#888;font-size:0.9em;">${results[i].v}</span></li>`;
+          } else {
+            html += `<li class="mdui-list-item" style="height:32px;opacity:0.3;cursor:default;"></li>`;
+          }
+        }
+        suggest.innerHTML = html;
+        // 选项点击
+        suggest.querySelectorAll('li').forEach((li, idx) => {
+          if (results[idx]) {
+            li.onmousedown = e => {
+              e.preventDefault();
+              addRate(results[idx]);
+              activeIdx = -1;
+              renderSuggest(results);
+            };
+          }
+        });
+        // 检查无结果，给父div加类
+        const input = document.getElementById('rateSearch');
+        const parent = input.closest('.mdui-textfield');
+        if (results.length === 0 && input.value.trim() !== '') {
+          parent.classList.add('mdui-textfield-invalid');
+        } else {
+          parent.classList.remove('mdui-textfield-invalid');
+        }
+      }
+
+      input.addEventListener('input', function() {
+        const val = input.value;
+        const results = filterRates(val);
+        lastResults = results;
+        activeIdx = -1;
+        renderSuggest(results);
+      });
+
+      input.addEventListener('keydown', function(e) {
+        if (!lastResults.length) return;
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          activeIdx = (activeIdx + 1) % Math.min(lastResults.length, 10);
+          renderSuggest(lastResults);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          activeIdx = (activeIdx - 1 + Math.min(lastResults.length, 10)) % Math.min(lastResults.length, 10);
+          renderSuggest(lastResults);
+        } else if (e.key === 'Enter') {
+          e.preventDefault();
+          if (activeIdx >= 0 && activeIdx < Math.min(lastResults.length, 10)) {
+            addRate(lastResults[activeIdx]);
+          } else if (lastResults.length > 0) {
+            addRate(lastResults[0]);
+          }
+          activeIdx = -1;
+          renderSuggest(lastResults);
+        }
+      });
+
+      // 失焦不隐藏
+      input.addEventListener('blur', function(){});
+      renderSelected();
+    });
+
+    function calcBitmap() {
+      let bitmap = BigInt(0);
+      selected.forEach(item => {
+        bitmap |= BigInt(item.v);
+      });
+      document.getElementById('hexResult').textContent = '0x' + bitmap.toString(16).toUpperCase();
+      document.getElementById('decResult').textContent = bitmap.toString(10);
+      document.getElementById('binResult').textContent = '0b' + bitmap.toString(2);
+    }
+
+    // 复制到剪贴板并提示
+    function copyText(text, el) {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => {
+          showCopyTip(el);
+        });
+      } else {
+        // 兼容性处理
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        showCopyTip(el);
+      }
+    }
+
+    function showCopyTip(el) {
+      const old = el.getAttribute('data-old-title');
+      if (!old) el.setAttribute('data-old-title', el.title);
+      el.title = '已复制!';
+      el.classList.add('mdui-text-color-green');
+      mdui.snackbar({ message: '已复制到剪贴板', position: 'bottom', timeout: 900 });
+      setTimeout(() => {
+        el.title = el.getAttribute('data-old-title') || '点击复制';
+        el.classList.remove('mdui-text-color-green');
+      }, 900);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.copyable').forEach(function(el) {
+        el.style.cursor = 'pointer';
+        el.addEventListener('click', function() {
+          copyText(el.textContent, el);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
