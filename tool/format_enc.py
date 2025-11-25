@@ -372,7 +372,26 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         <div class="mdui-container mdui-typo mdui-container-with-appbar" id="main-content">
         </div>
     </div>
-
+    <noscript>
+      <style>
+        .no-js-wrap{{position:fixed;inset:0;z-index:2147483647;min-height:40px;display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box;background:#ffffff;color:#111827;font-family: Roboto,Helvetica,Arial}}
+        .no-js-card{{max-width:720px;width:100%;border:1px solid #e5e7eb;border-radius:12px;padding:24px;background:#fff;box-shadow:0 1px 2px #0000000d}}
+        @media (prefers-color-scheme: dark){{
+          .no-js-wrap{{background:#0f1115;color:#e5e7eb}}
+          .no-js-card{{background:#0f1115;border-color:#374151;box-shadow:0 1px 2px #00000066}}
+        }}
+      </style>
+      <div class="no-js-wrap">
+        <div class="no-js-card">
+          <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#DA954B"><path d="M34.18-116.57 480-886.86l445.82 770.29H34.18Zm448.6-121.99q14.39 0 24.32-10.05 9.94-10.05 9.94-24.43 0-14.39-10.05-24.2-10.05-9.82-24.44-9.82t-24.32 9.93q-9.93 9.93-9.93 24.32t10.05 24.32q10.05 9.93 24.43 9.93ZM449.33-352H516v-213.85h-66.67V-352Z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="currentColor"><path d="M800.09-44.96 281.43-563.37l-84.13 84.13 183 183-63.89 63.89L68.52-480l148.26-148.02L44.96-800.09l59.39-59.39 755.13 755.13-59.39 59.39ZM746.8-335.57l-64.65-64.65 80.55-80.54-183-183 63.89-63.89L891.48-480 746.8-335.57Z"/></svg>
+          <p>网站应用程序必须启用 JavaScript 才能运作，但是此页面上的 JavaScript 已被拦截。<br />
+          请检查你的浏览器设置。
+          </p>
+          <a href="/">重新加载</a>
+        </div>
+      </div>
+    </noscript>
     <script>
     var ENCRYPTED_DATA = {encrypted_data};
     var SALT = "{salt}";
@@ -513,7 +532,6 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             textfield.classList.add('mdui-textfield-invalid');
             errorDiv.textContent = '密码错误，请重试';
             passwordInput.value = '';
-            passwordInput.focus();
         }}
     }}
 
@@ -926,7 +944,7 @@ def convert_markdown_to_encrypted_html(input_path, password, output_path=None):
     
     # 确定输出路径
     if output_path is None:
-        output_path = input_path.replace('.md', '_encrypted.html')
+        output_path = input_path.replace('.md', '.html')
     
     # 写入文件
     with open(output_path, 'w', encoding='utf-8') as f:

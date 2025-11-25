@@ -238,7 +238,7 @@
     <div class="mdui-dialog" id="password-dialog">
         <div class="mdui-dialog-title">访问受限</div>
         <div class="mdui-dialog-content">
-            <span>请输入密码以查看内容</span>
+            <span>请输入或粘贴快件单号</span>
             <div class="mdui-textfield mdui-textfield-floating-label">
                 <i class="mdui-icon material-icons">lock</i>
                 <label class="mdui-textfield-label">密码</label>
@@ -322,10 +322,29 @@
         <div class="mdui-container mdui-typo mdui-container-with-appbar" id="main-content">
         </div>
     </div>
-
+    <noscript>
+      <style>
+        .no-js-wrap{position:fixed;inset:0;z-index:2147483647;min-height:40px;display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box;background:#ffffff;color:#111827;font-family: Roboto,Helvetica,Arial}
+        .no-js-card{max-width:720px;width:100%;border:1px solid #e5e7eb;border-radius:12px;padding:24px;background:#fff;box-shadow:0 1px 2px #0000000d}
+        @media (prefers-color-scheme: dark){
+          .no-js-wrap{background:#0f1115;color:#e5e7eb}
+          .no-js-card{background:#0f1115;border-color:#374151;box-shadow:0 1px 2px #00000066}
+        }
+      </style>
+      <div class="no-js-wrap">
+        <div class="no-js-card">
+          <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#DA954B"><path d="M34.18-116.57 480-886.86l445.82 770.29H34.18Zm448.6-121.99q14.39 0 24.32-10.05 9.94-10.05 9.94-24.43 0-14.39-10.05-24.2-10.05-9.82-24.44-9.82t-24.32 9.93q-9.93 9.93-9.93 24.32t10.05 24.32q10.05 9.93 24.43 9.93ZM449.33-352H516v-213.85h-66.67V-352Z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="currentColor"><path d="M800.09-44.96 281.43-563.37l-84.13 84.13 183 183-63.89 63.89L68.52-480l148.26-148.02L44.96-800.09l59.39-59.39 755.13 755.13-59.39 59.39ZM746.8-335.57l-64.65-64.65 80.55-80.54-183-183 63.89-63.89L891.48-480 746.8-335.57Z"/></svg>
+          <p>网站应用程序必须启用 JavaScript 才能运作，但是此页面上的 JavaScript 已被拦截。<br />
+          请检查你的浏览器设置。
+          </p>
+          <a href="/">重新加载</a>
+        </div>
+      </div>
+    </noscript>
     <script>
-    var ENCRYPTED_DATA = { "ciphertext": "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", "iv": "+aOLMG+ecNd2iApf" };
-    var SALT = "DEEGXh9aUnfrJvaiMixCWkRU2SpaM4sMIqXqwFc6CgI=";
+    var ENCRYPTED_DATA = { "ciphertext": "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", "iv": "Vt/Q5GZOqPS+2iSI" };
+    var SALT = "JR0v42r0AJplb512c+kVytLEQfPzBrMOY6M7+Osps6w=";
     var passwordDialog = null;
     // 立即在解密弹窗前初始化主题与悬浮切换按钮，使弹窗显示时能正确渲染深色模式
     (function earlyThemeAndButtonInit() {
@@ -463,7 +482,6 @@
             textfield.classList.add('mdui-textfield-invalid');
             errorDiv.textContent = '密码错误，请重试';
             passwordInput.value = '';
-            passwordInput.focus();
         }
     }
 
