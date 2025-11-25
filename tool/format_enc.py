@@ -9,7 +9,6 @@ This script converts Markdown files into encrypted HTML files using Material Des
 for styling. The content is encrypted using AES-256-GCM and requires a password to view.
 
 Based on format.py with encryption features added.
-
 Usage
 ================
 ```
@@ -268,6 +267,17 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             width: 48px;
         }}
         
+        /* 密码错误时的摇晃动画 */
+        @keyframes shake {{
+            0%, 100% {{ transform: translateX(0); }}
+            10%, 30%, 50%, 70%, 90% {{ transform: translateX(-4px); }}
+            20%, 40%, 60%, 80% {{ transform: translateX(4px); }}
+        }}
+        
+        .mdui-textfield-invalid {{
+            animation: shake 0.35s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }}
+        
         #encrypted-content {{
             display: none;
         }}
@@ -278,16 +288,21 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     <div class="mdui-dialog" id="password-dialog">
         <div class="mdui-dialog-title">访问受限</div>
         <div class="mdui-dialog-content">
-            <p>请输入密码以查看内容</p>
+            <span>请输入密码以查看内容</span>
             <div class="mdui-textfield mdui-textfield-floating-label">
                 <i class="mdui-icon material-icons">lock</i>
                 <label class="mdui-textfield-label">密码</label>
                 <input class="mdui-textfield-input" type="password" id="password-input" autocomplete="off"/>
                 <div class="mdui-textfield-error"></div>
             </div>
+
+            
         </div>
         <div class="mdui-dialog-actions">
-            <button class="mdui-btn mdui-ripple" onclick="decryptContent()"><i class="mdui-icon material-icons mdui-icon-right">lock_open</i> 解锁</button>
+            <!-- Make explicit type=button to avoid implicit form submit/back navigation -->
+            <button type="button" class="mdui-btn mdui-btn-icon mdui-ripple" style="min-width: 0px;" onclick="pastePassword()"><i class="mdui-icon material-icons">content_paste</i></button>
+            <button type="button" class="mdui-btn mdui-btn-icon mdui-ripple" style="min-width: 0px;" onclick="togglePasswordVisibility()"><i class="mdui-icon material-icons" id="toggle-password-icon">visibility</i></button>
+            <button type="button" class="mdui-btn mdui-ripple" onclick="decryptContent()"><i class="mdui-icon material-icons mdui-icon-right">lock_open</i> 解锁</button>
         </div>
     </div>
 
@@ -362,6 +377,56 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     var ENCRYPTED_DATA = {encrypted_data};
     var SALT = "{salt}";
     var passwordDialog = null;
+    // 立即在解密弹窗前初始化主题与悬浮切换按钮，使弹窗显示时能正确渲染深色模式
+    (function earlyThemeAndButtonInit() {{
+        try {{
+            // 根据用户偏好或系统主题设置初始主题
+            var storedTheme = null;
+            try {{ storedTheme = localStorage.getItem('mdui-theme'); }} catch(e) {{ /* ignore if access denied */ }}
+            var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            var theme = storedTheme || (prefersDark ? 'dark' : 'light');
+            if (theme === 'dark') {{
+                document.body.classList.add('mdui-theme-layout-dark');
+            }}
+
+            // 标记触摸设备样式（因为复制按钮、悬浮等交互在弹窗前应正确呈现）
+            if (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0)) {{
+                document.body.classList.add('touch-device');
+            }}
+
+            // 创建并添加一个悬浮的主题切换按钮，供用户在解密前切换深色/浅色
+            var themeBtn = document.createElement('button');
+            themeBtn.className = 'mdui-fab mdui-color-theme-accent mdui-ripple theme-switch';
+            themeBtn.setAttribute('aria-label', '切换主题');
+            themeBtn.innerHTML = '<i class="mdui-icon material-icons">&#xe3a9;</i>';
+            themeBtn.style.display = 'block';
+            themeBtn.onclick = function() {{
+                var body = document.body;
+                var nowDark = body.classList.contains('mdui-theme-layout-dark');
+                if (nowDark) {{
+                    body.classList.remove('mdui-theme-layout-dark');
+                    try {{ localStorage.setItem('mdui-theme', 'light'); }} catch(e) {{}}
+                }} else {{
+                    body.classList.add('mdui-theme-layout-dark');
+                    try {{ localStorage.setItem('mdui-theme', 'dark'); }} catch(e) {{}}
+                }}
+            }};
+
+            var appendThemeBtn = function() {{
+                // 避免重复插入
+                if (!document.querySelector('.theme-switch')) {{
+                    document.body.appendChild(themeBtn);
+                }}
+            }};
+            if (document.readyState === 'loading') {{
+                document.addEventListener('DOMContentLoaded', appendThemeBtn);
+            }} else {{
+                appendThemeBtn();
+            }}
+        }} catch(e) {{
+            console.error('earlyThemeAndButtonInit error:', e);
+        }}
+    }})();
     
     function base64ToArrayBuffer(base64) {{
         var binaryString = atob(base64);
@@ -451,9 +516,35 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             passwordInput.focus();
         }}
     }}
+
+    function togglePasswordVisibility() {{
+        var input = document.getElementById('password-input');
+        var icon = document.getElementById('toggle-password-icon');
+        if (input.type === 'password') {{
+            input.type = 'text';
+            icon.innerHTML = 'visibility_off';
+        }} else {{
+            input.type = 'password';
+            icon.innerHTML = 'visibility';
+        }}
+    }}
     
-    document.getElementById('password-input').addEventListener('keypress', function(e) {{
+    async function pastePassword() {{
+        var input = document.getElementById('password-input');
+        try {{
+            var text = await navigator.clipboard.readText();
+            input.value = text;
+            input.focus();
+        }} catch (err) {{
+            console.error('粘贴失败:', err);
+            showSnackbar('粘贴失败，请手动输入密码');
+        }}
+    }}
+    
+    // Use keydown and prevent default action to avoid unexpected form submission / navigation
+    document.getElementById('password-input').addEventListener('keydown', function(e) {{
         if (e.key === 'Enter') {{
+            e.preventDefault();
             decryptContent();
         }}
     }});
@@ -660,7 +751,10 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         themeBtn.className = 'mdui-fab mdui-color-theme-accent mdui-ripple theme-switch';
         themeBtn.innerHTML = '<i class="mdui-icon material-icons">&#xe3a9;</i>';
         themeBtn.onclick = toggleTheme;
-        document.body.appendChild(themeBtn);
+        // 避免重复添加由早期脚本已创建的按钮
+        if (!document.querySelector('.theme-switch')) {{
+            document.body.appendChild(themeBtn);
+        }}
         
         try {{
             if (typeof mdui !== 'undefined') {{
@@ -745,7 +839,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         passwordDialog = new mdui.Dialog('#password-dialog', {{
             modal: true,
             closeOnEsc: false,
-            closeOnCancel: false
+            closeOnCancel: false,
+            history: false
         }});
         passwordDialog.open();
         
